@@ -27,7 +27,7 @@ import com.verivital.hyst.util.AutomatonUtil;
  * @author Stanley Bak (stanleybak@gmail.com)
  *
  */
-public class AutomatonMode
+public class PDAutomatonMode
 {
 	public String name;
 	public final BaseComponent automaton;
