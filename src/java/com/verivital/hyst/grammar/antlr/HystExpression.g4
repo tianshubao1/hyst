@@ -80,6 +80,12 @@ flowExpression
 	| FALSE # FlowFalse
     ;
 
+partialflowExpression
+    : EOF							# FlowBlank
+    | VAR TICK? EQUAL addSub (AND VAR TICK? EQUAL addSub)* EOF	# Flow
+	| FALSE # FlowFalse
+    ;
+    
 dottedVar
 	: VAR (DOT VAR)* TICK?	# DotVar
 	;
