@@ -78,14 +78,15 @@ invariantExpression
 flowExpression
     : EOF							# FlowBlank
     | VAR TICK? EQUAL addSub (AND VAR TICK? EQUAL addSub)* EOF	# Flow
-	| FALSE # FlowFalse
+    | FALSE # FlowFalse
     ;
 
-partialflowExpression
-    : EOF							# FlowBlank
-    | VAR TICK? EQUAL ULINE PLUS addSub (AND VAR TICK? EQUAL addSub)* EOF	# Flow
-	| FALSE # FlowFalse
+partialFlowExpression
+    : EOF							# PDEFlowBlank
+    | VAR TICK? EQUAL VAR (ULINE)* PLUS addSub EOF		# PDEFlow
+    | FALSE # PDEFlowFalse
     ;
+
     
 dottedVar
 	: VAR (DOT VAR)* TICK?	# DotVar
