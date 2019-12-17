@@ -83,7 +83,7 @@ flowExpression
 
 partialflowExpression
     : EOF							# FlowBlank
-    | VAR TICK? EQUAL addSub (AND VAR TICK? EQUAL addSub)* EOF	# Flow
+    | VAR TICK? EQUAL ULINE PLUS addSub (AND VAR TICK? EQUAL addSub)* EOF	# Flow
 	| FALSE # FlowFalse
     ;
     
