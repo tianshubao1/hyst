@@ -2,6 +2,7 @@ grammar HystExpression;
 
 WS : [ \t\r\n]+ -> skip;
 TICK : '\'';
+ULINE : '_';
 
 TRUE : 'true';
 FALSE : 'false';
