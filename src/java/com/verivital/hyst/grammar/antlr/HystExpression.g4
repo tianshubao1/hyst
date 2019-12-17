@@ -137,11 +137,6 @@ timesDiv
     | pow     		    # ToPow
     ;
 
-spacesDiv
-    : spacesDiv TIMES pow    # Multiplication
-    | spacesDiv DIV pow      # Division
-    | pow     		    # ToPow
-    ;
     
 pow
     : pow POW negativeUnary # PowExpression
