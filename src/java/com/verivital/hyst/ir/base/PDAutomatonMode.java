@@ -30,7 +30,7 @@ import com.verivital.hyst.util.AutomatonUtil;
 public class PDAutomatonMode
 {
 	public String name;
-	public final BaseComponent automaton;
+	public final PDBaseComponent automaton;
 	public Expression invariant;
 	public boolean urgent = false;
 	public LinkedHashMap<String, ExpressionInterval> flowDynamics;
@@ -51,7 +51,7 @@ public class PDAutomatonMode
 		patialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
 
 		for (String s : pdha.variables)
-			flowDynamics.put(s, null); // these MUST be set or removed,
+			patialFlowDynamics.put(s, null); // these MUST be set or removed,
 										// otherwise validation will fail
 	}
 
