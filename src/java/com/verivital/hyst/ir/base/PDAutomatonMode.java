@@ -42,15 +42,15 @@ public class PDAutomatonMode
 	 * @param ha
 	 *            the hybrid automaton
 	 */
-	AutomatonMode(BaseComponent ha, String name)
+	AutomatonMode(PDBaseComponent pdha, String name)
 	{
 		this.name = name;
-		automaton = ha;
+		automaton = pdha;
 
 		invariant = null; // this MUST be set, otherwise validation will fail
-		flowDynamics = new LinkedHashMap<String, ExpressionInterval>();
+		patialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
 
-		for (String s : ha.variables)
+		for (String s : pdha.variables)
 			flowDynamics.put(s, null); // these MUST be set or removed,
 										// otherwise validation will fail
 	}
