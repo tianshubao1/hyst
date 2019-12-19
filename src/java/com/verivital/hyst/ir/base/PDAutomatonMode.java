@@ -33,7 +33,7 @@ public class PDAutomatonMode
 	public final PDBaseComponent automaton;
 	public Expression invariant;
 	public boolean urgent = false;
-	public LinkedHashMap<String, ExpressionInterval> flowDynamics;
+	public LinkedHashMap<String, ExpressionInterval> patialFlowDynamics;
 
 	/**
 	 * The correct way to create a new automaton mode is using HybridAutomaton.createMode(name),
@@ -42,7 +42,7 @@ public class PDAutomatonMode
 	 * @param ha
 	 *            the hybrid automaton
 	 */
-	AutomatonMode(PDBaseComponent pdha, String name)
+	PDAutomatonMode(PDBaseComponent pdha, String name)
 	{
 		this.name = name;
 		automaton = pdha;
