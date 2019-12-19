@@ -17,9 +17,9 @@ import com.verivital.hyst.util.AutomatonUtil;
  * A mode of a hybrid automaton.
  * 
  * name, automaton and invariant are nonnull name is a valid c identifier invariant is not null or
- * false flowDynamics can only be null if urgent==true; flow may not be defined for every variable
+ * false patialFlowDynamics can only be null if urgent==true; flow may not be defined for every variable
  * (some variables may be omitted, for example havoc dynamics or dynamics defined in another
- * automaton). if nonnull, every variable defined in flowDynamics must exist in the BaseComponent.
+ * automaton). if nonnull, every variable defined in patialFlowDynamics must exist in the PDBaseComponent.
  * 
  * After flattening, every variable must have a defined flowDyanmics (this is one of the guarantees
  * provided by the flatten pass).
@@ -84,22 +84,22 @@ public class PDAutomatonMode
 		if (invariant.equals(Constant.FALSE))
 			throw new AutomatonValidationException("invariant was equal to Constant.FALSE");
 
-		if (flowDynamics == null && urgent == false)
-			throw new AutomatonValidationException("flowDynamics was null but urgent was false");
+		if (patialFlowDynamics == null && urgent == false)
+			throw new AutomatonValidationException("patialFlowDynamics was null but urgent was false");
 
-		if (urgent == true && flowDynamics != null)
+		if (urgent == true && patialFlowDynamics != null)
 			throw new AutomatonValidationException("Mode '" + name
-					+ "' was urgent, but dynamics were also defined: " + flowDynamics);
+					+ "' was urgent, but dynamics were also defined: " + patialFlowDynamics);
 
-		if (flowDynamics != null)
+		if (patialFlowDynamics != null)
 		{
-			for (String s : flowDynamics.keySet())
+			for (String s : patialFlowDynamics.keySet())
 			{
 				if (!automaton.variables.contains(s))
 				{
 					throw new AutomatonValidationException(
 							"dynamics were defined for variable '" + s + "' in mode '" + name
-									+ "', but the variable didn't exist in the parent BaseComponent '"
+									+ "', but the variable didn't exist in the parent PDBaseComponent '"
 									+ automaton.getPrintableInstanceName() + "'");
 				}
 			}
@@ -110,7 +110,7 @@ public class PDAutomatonMode
 
 		if (!urgent)
 		{
-			for (Entry<String, ExpressionInterval> entry : flowDynamics.entrySet())
+			for (Entry<String, ExpressionInterval> entry : patialFlowDynamics.entrySet())
 			{
 				ExpressionInterval ei = entry.getValue();
 
@@ -124,9 +124,9 @@ public class PDAutomatonMode
 	@Override
 	public String toString()
 	{
-		return "[AutomatonMode name:" + name + ", urgent: " + urgent + ", invariant: "
-				+ DefaultExpressionPrinter.instance.print(invariant) + ", flowDynamics: "
-				+ AutomatonUtil.getMapExpressionIntervalString(flowDynamics) + "]";
+		return "[PDAutomatonMode name:" + name + ", urgent: " + urgent + ", invariant: "
+				+ DefaultExpressionPrinter.instance.print(invariant) + ", patialFlowDynamics: "
+				+ AutomatonUtil.getMapExpressionIntervalString(patialFlowDynamics) + "]";
 	}
 
 	/**
@@ -138,19 +138,19 @@ public class PDAutomatonMode
 	 * @param newName
 	 *            an automaton-unique name for the new mode
 	 */
-	public AutomatonMode copy(BaseComponent parent, String newName)
+	public PDAutomatonMode copy(PDBaseComponent parent, String newName)
 	{
-		AutomatonMode rv = parent.createMode(newName);
+		PDAutomatonMode rv = parent.createMode(newName);
 
 		rv.invariant = invariant.copy();
 
-		if (flowDynamics != null)
+		if (patialFlowDynamics != null)
 		{
-			for (Entry<String, ExpressionInterval> e : flowDynamics.entrySet())
-				rv.flowDynamics.put(e.getKey(), e.getValue().copy());
+			for (Entry<String, ExpressionInterval> e : patialFlowDynamics.entrySet())
+				rv.patialFlowDynamics.put(e.getKey(), e.getValue().copy());
 		}
 		else
-			rv.flowDynamics = null;
+			rv.patialFlowDynamics = null;
 
 		rv.urgent = urgent;
 
@@ -164,9 +164,9 @@ public class PDAutomatonMode
 	 * @param newName
 	 *            an automaton-unique name for the new mode
 	 */
-	public AutomatonMode copyWithTransitions(String newName)
+	public PDAutomatonMode copyWithTransitions(String newName)
 	{
-		AutomatonMode rv = copy(automaton, newName);
+		PDAutomatonMode rv = copy(automaton, newName);
 
 		// also copy the transitions
 		ArrayList<AutomatonTransition> fromCopy = new ArrayList<AutomatonTransition>();
