@@ -32,9 +32,9 @@ import com.verivital.hyst.util.AutomatonUtil;
  * @author Stanley Bak (stanleybak@gmail.com)
  *
  */
-public class BaseComponent extends Component
+public class PDBaseComponent extends Component
 {
-	public LinkedHashMap<String, AutomatonMode> modes = new LinkedHashMap<String, AutomatonMode>();
+	public LinkedHashMap<String, PDAutomatonMode> modes = new LinkedHashMap<String, PDAutomatonMode>();
 	public ArrayList<AutomatonTransition> transitions = new ArrayList<AutomatonTransition>();
 
 	/**
@@ -44,11 +44,11 @@ public class BaseComponent extends Component
 	 * 
 	 * @param name
 	 *            a name for the mode (must be unique)
-	 * @return the created AutomatonMode object
+	 * @return the created PDAutomatonMode object
 	 */
-	public AutomatonMode createMode(String name)
+	public PDAutomatonMode createMode(String name)
 	{
-		AutomatonMode rv = new AutomatonMode(this, name);
+		PDAutomatonMode rv = new PDAutomatonMode(this, name);
 
 		if (modes.containsKey(name))
 			throw new AutomatonValidationException("Mode with name '" + name + "' already exists.");
@@ -66,14 +66,14 @@ public class BaseComponent extends Component
 	 *            a name for the mode (must be unique)
 	 * @param allDynamics
 	 *            the dynamics for every variable
-	 * @return the created AutomatonMode object
+	 * @return the created PDAutomatonMode object
 	 */
-	public AutomatonMode createMode(String name, ExpressionInterval allDynamics)
+	public PDAutomatonMode createMode(String name, ExpressionInterval allDynamics)
 	{
-		AutomatonMode am = createMode(name);
+		PDAutomatonMode am = createMode(name);
 
 		for (String v : variables)
-			am.flowDynamics.put(v, allDynamics.copy());
+			am.patialFlowDynamics.put(v, allDynamics.copy());
 
 		return am;
 	}
@@ -89,9 +89,9 @@ public class BaseComponent extends Component
 	 *            the mode flow expression
 	 * @return the created Mode
 	 */
-	public AutomatonMode createMode(String name, String invariant, String flowString)
+	public PDAutomatonMode createMode(String name, String invariant, String flowString)
 	{
-		AutomatonMode rv = new AutomatonMode(this, name);
+		PDAutomatonMode rv = new PDAutomatonMode(this, name);
 
 		if (modes.containsKey(name))
 			throw new AutomatonValidationException("Mode with name '" + name + "' already exists.");
@@ -100,11 +100,11 @@ public class BaseComponent extends Component
 
 		rv.invariant = FormulaParser.parseInvariant(invariant);
 		Expression flowExpression = FormulaParser.parseFlow(flowString);
-		rv.flowDynamics = new LinkedHashMap<String, ExpressionInterval>();
+		rv.patialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
 
 		for (Entry<String, Expression> e : AutomatonUtil
 				.parseFlowExpression(variables, flowExpression).entrySet())
-			rv.flowDynamics.put(e.getKey(), new ExpressionInterval(e.getValue()));
+			rv.patialFlowDynamics.put(e.getKey(), new ExpressionInterval(e.getValue()));
 
 		return rv;
 	}
@@ -119,7 +119,7 @@ public class BaseComponent extends Component
 	 *            the destination
 	 * @return the created AutomatonTransition object
 	 */
-	public AutomatonTransition createTransition(AutomatonMode from, AutomatonMode to)
+	public AutomatonTransition createTransition(PDAutomatonMode from, PDAutomatonMode to)
 	{
 		AutomatonTransition rv = new AutomatonTransition(this, from, to);
 
@@ -155,16 +155,16 @@ public class BaseComponent extends Component
 		if (transitions == null)
 			throw new AutomatonValidationException("transitions was null");
 
-		for (Entry<String, AutomatonMode> e : modes.entrySet())
+		for (Entry<String, PDAutomatonMode> e : modes.entrySet())
 		{
 			if (!e.getKey().equals(e.getValue().name))
 			{
 				throw new AutomatonValidationException("mode map name mismatch. In map name is "
-						+ e.getKey() + "," + "but in the AutomatonMode it's " + e.getValue().name);
+						+ e.getKey() + "," + "but in the PDAutomatonMode it's " + e.getValue().name);
 			}
 		}
 
-		for (AutomatonMode m : modes.values())
+		for (PDAutomatonMode m : modes.values())
 			m.validate();
 
 		for (AutomatonTransition t : transitions)
@@ -185,7 +185,7 @@ public class BaseComponent extends Component
 
 			if (!found)
 			{
-				String msg = "Exported label '" + label + "' was not used in BaseComponent '"
+				String msg = "Exported label '" + label + "' was not used in PDBaseComponent '"
 						+ getPrintableInstanceName() + "'.";
 				Hyst.log(msg
 						+ " This would block all transitions using this label in other components, and is typically a mistake.");
@@ -198,15 +198,15 @@ public class BaseComponent extends Component
 		Set<String> firstModeFlows = null;
 		String firstModeName = null;
 
-		for (Entry<String, AutomatonMode> e : modes.entrySet())
+		for (Entry<String, PDAutomatonMode> e : modes.entrySet())
 		{
 			String name = e.getKey();
-			AutomatonMode am = e.getValue();
+			PDAutomatonMode am = e.getValue();
 
 			if (am.urgent)
 				continue;
 
-			Set<String> flows = am.flowDynamics.keySet();
+			Set<String> flows = am.patialFlowDynamics.keySet();
 
 			if (firstModeName == null)
 			{
@@ -217,14 +217,14 @@ public class BaseComponent extends Component
 			{
 				if (!flows.equals(firstModeFlows))
 				{
-					throw new AutomatonValidationException("BaseComponent "
+					throw new AutomatonValidationException("PDBaseComponent "
 							+ getPrintableInstanceName()
 							+ ": Variables with defined flows in mode '" + firstModeName + "' ("
 							+ firstModeFlows + ") differ from mode '" + name + "' (" + flows + ")");
 				}
 			}
 
-			for (Entry<String, ExpressionInterval> entry : am.flowDynamics.entrySet())
+			for (Entry<String, ExpressionInterval> entry : am.patialFlowDynamics.entrySet())
 			{
 				Expression exp = entry.getValue().getExpression();
 
@@ -234,7 +234,7 @@ public class BaseComponent extends Component
 				}
 				catch (AutomatonValidationException ave)
 				{
-					throw new AutomatonValidationException("BaseComponent "
+					throw new AutomatonValidationException("PDBaseComponent "
 							+ getPrintableInstanceName() + ": Flow in mode '" + am.name
 							+ "' for variable '" + entry.getKey() + "'='" + exp.toDefaultString()
 							+ "' uses a variable/constant not in the component. "
@@ -274,14 +274,14 @@ public class BaseComponent extends Component
 	{
 		StringBuilder str = new StringBuilder();
 
-		str.append("[BaseComponent: ");
+		str.append("[PDBaseComponent: ");
 
 		str.append(super.toString());
 
 		str.append("\nModes (" + modes.size() + " total):");
 
-		Set<Entry<String, AutomatonMode>> set = modes.entrySet();
-		for (Entry<String, AutomatonMode> e : set)
+		Set<Entry<String, PDAutomatonMode>> set = modes.entrySet();
+		for (Entry<String, PDAutomatonMode> e : set)
 			str.append("\n " + e.getKey() + ": " + e.getValue());
 
 		str.append("\nTransitions (" + transitions.size() + " total):");
@@ -311,12 +311,12 @@ public class BaseComponent extends Component
 	@Override
 	protected Component copyComponent()
 	{
-		BaseComponent rv = new BaseComponent();
+		PDBaseComponent rv = new PDBaseComponent();
 
 		// copy modes
-		for (Entry<String, AutomatonMode> e : modes.entrySet())
+		for (Entry<String, PDAutomatonMode> e : modes.entrySet())
 		{
-			AutomatonMode am = e.getValue();
+			PDAutomatonMode am = e.getValue();
 			rv.modes.put(e.getKey(), am.copy(rv, am.name));
 		}
 
