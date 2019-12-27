@@ -68,7 +68,7 @@ public class DiscretePDBaseComponent extends Component
 	 *            the dynamics for every variable
 	 * @return the created PDAutomatonMode object
 	 */
-	public PDAutomatonMode createMode(String[] names, ExpressionInterval allDynamics)
+	public DiscretePDAutomatonMode createMode(String[] names, ExpressionInterval allDynamics)
 	{
 		PDAutomatonMode am = createMode(name);
 
