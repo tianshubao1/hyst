@@ -191,8 +191,21 @@ public class PDAutomatonMode extends AutomatonMode
 
 		return rv;
 	}
+
+
+	/**
+	 * Discretize the one dimension interval, given starting point, ending point and the number of mesh points.
+	 * 
+	 * @param sPoint
+	 *            the starting point of the interval
+	 * @param ePoint
+	 *            the ending point of the interval
+	 * @param numOfMeshpoints
+	 *            the number of mesh points in the interval
+	 *
+	 */
 	
-	public PDAutomatonMode discretize(int numOfMeshpoints)
+	public PDAutomatonMode discretize(int sPoint, int ePoint, int numOfMeshpoints)
 	{
 		PDAutomatonMode rv = copy(automaton, newName);
 
