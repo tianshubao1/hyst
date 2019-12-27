@@ -89,7 +89,7 @@ public class PDBaseComponent extends Component
 	 *            the mode flow expression
 	 * @return the created Mode
 	 */
-	public PDAutomatonMode createMode(String name, String invariant, String flowString)
+	public PDAutomatonMode createMode(String name, String invariant, String partialFlowString)
 	{
 		PDAutomatonMode rv = new PDAutomatonMode(this, name);
 
