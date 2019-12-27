@@ -381,7 +381,7 @@ public class PDBaseComponent extends Component
 	 *
 	 */
 	
-	public DiscretePDAutomatonMode discretize(int sPoint, int ePoint, int numOfMeshpoints)
+	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints)
 	{
 		PDAutomatonMode rv = copy(automaton, newName);
 
