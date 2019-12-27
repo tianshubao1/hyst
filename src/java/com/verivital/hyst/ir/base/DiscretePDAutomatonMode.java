@@ -30,7 +30,7 @@ import com.verivital.hyst.util.AutomatonUtil;
 public class DiscretePDAutomatonMode extends AutomatonMode
 {
 	public String name;
-	public final PDBaseComponent automaton;
+	public final DiscretePDBaseComponent automaton;
 	public Expression invariant;
 	public boolean urgent = false;
 	public LinkedHashMap<String, ExpressionInterval> patialFlowDynamics;
@@ -42,15 +42,15 @@ public class DiscretePDAutomatonMode extends AutomatonMode
 	 * @param ha
 	 *            the hybrid automaton
 	 */
-	PDAutomatonMode(PDBaseComponent pdha, String name)
+	DiscretePDAutomatonMode(DiscretePDBaseComponent dspdha, String name)
 	{
 		this.name = name;
-		automaton = pdha;
+		automaton = dspdha;
 
 		invariant = null; // this MUST be set, otherwise validation will fail
 		patialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
 
-		for (String s : pdha.variables)
+		for (String s : dspdha.variables)
 			patialFlowDynamics.put(s, null); // these MUST be set or removed,
 										// otherwise validation will fail
 	}
@@ -138,9 +138,9 @@ public class DiscretePDAutomatonMode extends AutomatonMode
 	 * @param newName
 	 *            an automaton-unique name for the new mode
 	 */
-	public PDAutomatonMode copy(PDBaseComponent parent, String newName)
+	public DiscretePDAutomatonMode copy(DiscretePDBaseComponent parent, String newName)
 	{
-		PDAutomatonMode rv = parent.createMode(newName);
+		DiscretePDAutomatonMode rv = parent.createMode(newName);
 
 		rv.invariant = invariant.copy();
 
@@ -164,9 +164,9 @@ public class DiscretePDAutomatonMode extends AutomatonMode
 	 * @param newName
 	 *            an automaton-unique name for the new mode
 	 */
-	public PDAutomatonMode copyWithTransitions(String newName)
+	public DiscretePDAutomatonMode copyWithTransitions(String newName)
 	{
-		PDAutomatonMode rv = copy(automaton, newName);
+		DiscretePDAutomatonMode rv = copy(automaton, newName);
 
 		// also copy the transitions
 		ArrayList<AutomatonTransition> fromCopy = new ArrayList<AutomatonTransition>();
