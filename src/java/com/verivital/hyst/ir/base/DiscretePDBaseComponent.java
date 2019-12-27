@@ -34,7 +34,7 @@ import com.verivital.hyst.util.AutomatonUtil;
  */
 public class DiscretePDBaseComponent extends Component
 {
-	public LinkedHashMap<String, PDAutomatonMode> modes = new LinkedHashMap<String, PDAutomatonMode>();
+	public LinkedHashMap<String, DiscretePDAutomatonMode> modes = new LinkedHashMap<String, DiscretePDAutomatonMode>();
 	public ArrayList<AutomatonTransition> transitions = new ArrayList<AutomatonTransition>();
 
 	/**
@@ -48,12 +48,12 @@ public class DiscretePDBaseComponent extends Component
 	 */
 	public DiscretePDAutomatonMode createMode(String[] names)
 	{
-		PDAutomatonMode rv = new PDAutomatonMode(this, name);
+		DiscretePDAutomatonMode rv = new DiscretePDAutomatonMode(this, names);
 
-		if (modes.containsKey(name))
+		if (modes.containsKey(names))
 			throw new AutomatonValidationException("Mode with name '" + name + "' already exists.");
 
-		modes.put(name, rv);
+		modes.put(names, rv);
 
 		return rv;
 	}
@@ -119,7 +119,7 @@ public class DiscretePDBaseComponent extends Component
 	 *            the destination
 	 * @return the created AutomatonTransition object
 	 */
-	public AutomatonTransition createTransition(PDAutomatonMode from, PDAutomatonMode to)
+	public AutomatonTransition createTransition(DiscretePDAutomatonMode from, DiscretePDAutomatonMode to)
 	{
 		AutomatonTransition rv = new AutomatonTransition(this, from, to);
 
@@ -311,10 +311,10 @@ public class DiscretePDBaseComponent extends Component
 	@Override
 	protected Component copyComponent()
 	{
-		PDBaseComponent rv = new PDBaseComponent();
+		DiscretePDBaseComponent rv = new DiscretePDBaseComponent();
 
 		// copy modes
-		for (Entry<String, PDAutomatonMode> e : modes.entrySet())
+		for (Entry<String, DiscretePDAutomatonMode> e : modes.entrySet())
 		{
 			PDAutomatonMode am = e.getValue();
 			rv.modes.put(e.getKey(), am.copy(rv, am.name));
