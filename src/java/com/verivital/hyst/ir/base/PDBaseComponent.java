@@ -99,7 +99,7 @@ public class PDBaseComponent extends Component
 		modes.put(name, rv);
 
 		rv.invariant = FormulaParser.parseInvariant(invariant);
-		Expression flowExpression = FormulaParser.parseFlow(flowString);
+		Expression flowExpression = FormulaParser.parseFlow(partialFlowString);
 		rv.patialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
 
 		for (Entry<String, Expression> e : AutomatonUtil
