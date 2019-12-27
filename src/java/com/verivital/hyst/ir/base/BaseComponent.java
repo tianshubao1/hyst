@@ -368,43 +368,5 @@ public class BaseComponent extends Component
 		return rv;
 	}
 	
-	/**
-	 * Discretize the one dimension interval, given starting point, ending point and the number of mesh points.
-	 * 
-	 * @param sPoint
-	 *            the starting point of the interval
-	 * @param ePoint
-	 *            the ending point of the interval
-	 * @param numOfMeshpoints
-	 *            the number of mesh points in the interval
-	 *
-	 */
-	
-	public PDAutomatonMode discretize(int sPoint, int ePoint, int numOfMeshpoints)
-	{
-		PDAutomatonMode rv = copy(automaton, newName);
 
-		// also copy the transitions
-		ArrayList<AutomatonTransition> fromCopy = new ArrayList<AutomatonTransition>();
-		ArrayList<AutomatonTransition> toCopy = new ArrayList<AutomatonTransition>();
-
-		for (AutomatonTransition at : automaton.transitions)
-		{
-			if (at.from == this && at.to == this)
-				throw new AutomatonExportException(
-						"Can't clone automaton mode with self-loop since meaning is unclear.");
-			else if (at.from == this)
-				fromCopy.add(at);
-			else if (at.to == this)
-				toCopy.add(at);
-		}
-
-		for (AutomatonTransition at : fromCopy)
-			at.copy(automaton).from = rv;
-
-		for (AutomatonTransition at : toCopy)
-			at.copy(automaton).to = rv;
-
-		return rv;
-	}
 }
