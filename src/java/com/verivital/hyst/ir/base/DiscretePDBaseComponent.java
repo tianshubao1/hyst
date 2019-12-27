@@ -46,7 +46,7 @@ public class DiscretePDBaseComponent extends Component
 	 *            a name for the mode (must be unique)
 	 * @return the created PDAutomatonMode object
 	 */
-	public PDAutomatonMode createMode(String[] names)
+	public DiscretePDAutomatonMode createMode(String[] names)
 	{
 		PDAutomatonMode rv = new PDAutomatonMode(this, name);
 
@@ -68,7 +68,7 @@ public class DiscretePDBaseComponent extends Component
 	 *            the dynamics for every variable
 	 * @return the created PDAutomatonMode object
 	 */
-	public PDAutomatonMode createMode(String name, ExpressionInterval allDynamics)
+	public PDAutomatonMode createMode(String[] names, ExpressionInterval allDynamics)
 	{
 		PDAutomatonMode am = createMode(name);
 
@@ -89,7 +89,7 @@ public class DiscretePDBaseComponent extends Component
 	 *            the mode flow expression
 	 * @return the created Mode
 	 */
-	public PDAutomatonMode createMode(String name, String invariant, String flowString)
+	public DiscretePDAutomatonMode createMode(String[] names, String invariant, String flowString)
 	{
 		PDAutomatonMode rv = new PDAutomatonMode(this, name);
 
