@@ -42,9 +42,9 @@ public class DiscretePDAutomatonMode extends AutomatonMode
 	 * @param ha
 	 *            the hybrid automaton
 	 */
-	DiscretePDAutomatonMode(DiscretePDBaseComponent dspdha, String name)
+	DiscretePDAutomatonMode(DiscretePDBaseComponent dspdha, String[] names)
 	{
-		this.name = name;
+		this.names = names;
 		automaton = dspdha;
 
 		invariant = null; // this MUST be set, otherwise validation will fail
