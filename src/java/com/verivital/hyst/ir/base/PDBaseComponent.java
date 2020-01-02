@@ -380,34 +380,22 @@ public class PDBaseComponent extends Component
 	 *            the ending point of the interval
 	 * @param numOfMeshpoints
 	 *            the number of mesh points in the interval
-	 *
+	 * @param init
+	 *	      the initial discrete partition
 	 */
-	
-	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints)
+	 
+	 
+	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints, String[] init)
 	{
-		PDAutomatonMode rv = copy(automaton, newName);
-
-		// also copy the transitions
-		ArrayList<AutomatonTransition> fromCopy = new ArrayList<AutomatonTransition>();
-		ArrayList<AutomatonTransition> toCopy = new ArrayList<AutomatonTransition>();
-
-		for (AutomatonTransition at : automaton.transitions)
-		{
-			if (at.from == this && at.to == this)
-				throw new AutomatonExportException(
-						"Can't clone automaton mode with self-loop since meaning is unclear.");
-			else if (at.from == this)
-				fromCopy.add(at);
-			else if (at.to == this)
-				toCopy.add(at);
-		}
-
-		for (AutomatonTransition at : fromCopy)
-			at.copy(automaton).from = rv;
-
-		for (AutomatonTransition at : toCopy)
-			at.copy(automaton).to = rv;
-
-		return rv;
-	}	
+		if(init.length != numOfMeshpoints)
+			throw new AutomatonValidationException("initial condition does not match mesh size.");
+			
+		DiscretePDBaseComponent dspdha = new DiscretePDBaseComponent(numOfMeshpoints);
+		
+		String[] discretePartition = init;	//Discrete partition is decided by the number of mesh points.
+		dspdha.createMode(discretePartition);
+		
+				
+		return dspdha;
+	}
 }
