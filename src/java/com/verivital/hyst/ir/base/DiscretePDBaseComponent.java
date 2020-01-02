@@ -53,7 +53,7 @@ public class DiscretePDBaseComponent extends Component
 			size = n;
 	} 
 	
-	public DiscretePDAutomatonMode createMode(String[] names)
+	public DiscretePDAutomatonMode createMode(List<String> names)
 	{
 		DiscretePDAutomatonMode rv = new DiscretePDAutomatonMode(this, names);
 
@@ -75,9 +75,9 @@ public class DiscretePDBaseComponent extends Component
 	 *            the dynamics for every variable
 	 * @return the created PDAutomatonMode object
 	 */
-	public DiscretePDAutomatonMode createMode(String[] names, ExpressionInterval allDynamics)
+	public DiscretePDAutomatonMode createMode(List<String> names, ExpressionInterval allDynamics)
 	{
-		PDAutomatonMode am = createMode(name);
+		PDAutomatonMode am = createMode(names);
 
 		for (String v : variables)
 			am.patialFlowDynamics.put(v, allDynamics.copy());
@@ -96,14 +96,14 @@ public class DiscretePDBaseComponent extends Component
 	 *            the mode flow expression
 	 * @return the created Mode
 	 */
-	public DiscretePDAutomatonMode createMode(String[] names, String invariant, String flowString)
+	public DiscretePDAutomatonMode createMode(List<String> names, String invariant, String flowString)
 	{
-		PDAutomatonMode rv = new PDAutomatonMode(this, name);
+		PDAutomatonMode rv = new PDAutomatonMode(this, names);
 
-		if (modes.containsKey(name))
+		if (modes.containsKey(names))
 			throw new AutomatonValidationException("Mode with name '" + name + "' already exists.");
 
-		modes.put(name, rv);
+		modes.put(names, rv);
 
 		rv.invariant = FormulaParser.parseInvariant(invariant);
 		Expression flowExpression = FormulaParser.parseFlow(flowString);
