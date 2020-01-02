@@ -368,25 +368,18 @@ public class DiscretePDBaseComponent extends Component
 		return rv;
 	}
 	
-	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints, int[] initCondition)// must need an initial condition
+	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints, String[] init)// must need an initial condition
 	{
 		DiscretePDBaseComponent dspdha = new DiscretePDBaseComponent(numOfMeshpoints);
-		String[] discretePartition = new String[numOfMeshpoints];	//Discrete partition is decided by the number of mesh points.
-		String[] modeName = modes.KeySet().toArray();	//names of all modes
-		int numOfModes = modes.size();
-		for(int k = 0; k < numOfMeshpoints; k++){
-			discretePartition[k] = modeName[0];			
-		}		
 		
-		//consider permutation next, cant use 2 forloops
-		for(int i = 0; i < numOfMeshpoints; i++){
-			for(int j = 0; j < numOfModes; j++){
-				discretePartition[i] = modeName[j];
-				dspdha.createMode(discretePartition);				
-			}
-		}
+		String[] discretePartition = init;	//Discrete partition is decided by the number of mesh points.
+		dspdha.createMode(discretePartition);
 		
-
+		
+		if(discretePartition.length != numOfMeshpoints)
+			throw new AutomatonValidationException("initial condition does not match mesh size.");
+		
+		
 		return dspdha;
 	}	
 	
