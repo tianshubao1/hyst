@@ -29,7 +29,7 @@ import com.verivital.hyst.util.AutomatonUtil;
  */
 public class DiscretePDAutomatonMode extends AutomatonMode
 {
-	public String[] names;
+	public List<String> names;
 	public final DiscretePDBaseComponent automaton;
 	public Expression invariant;
 	public boolean urgent = false;
@@ -42,7 +42,7 @@ public class DiscretePDAutomatonMode extends AutomatonMode
 	 * @param ha
 	 *            the hybrid automaton
 	 */
-	DiscretePDAutomatonMode(DiscretePDBaseComponent dspdha, String[] names)
+	DiscretePDAutomatonMode(DiscretePDBaseComponent dspdha, List<String> names)
 	{
 		this.names = names;
 		automaton = dspdha;
