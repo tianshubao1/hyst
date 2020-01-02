@@ -385,14 +385,16 @@ public class DiscretePDBaseComponent extends Component
 	 
 	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints, String[] init)
 	{
+		if(init.length != numOfMeshpoints)
+			throw new AutomatonValidationException("initial condition does not match mesh size.");
+			
 		DiscretePDBaseComponent dspdha = new DiscretePDBaseComponent(numOfMeshpoints);
 		
 		String[] discretePartition = init;	//Discrete partition is decided by the number of mesh points.
 		dspdha.createMode(discretePartition);
 		
 		
-		if(discretePartition.length != numOfMeshpoints)
-			throw new AutomatonValidationException("initial condition does not match mesh size.");
+
 		
 		
 		return dspdha;
