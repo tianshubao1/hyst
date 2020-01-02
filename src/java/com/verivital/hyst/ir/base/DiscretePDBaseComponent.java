@@ -367,8 +367,23 @@ public class DiscretePDBaseComponent extends Component
 
 		return rv;
 	}
-	
-	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints, String[] init)// must need an initial condition
+
+
+	/**
+	 * Discretize the one dimension interval, given starting point, ending point and the number of mesh points.
+	 * 
+	 * @param sPoint
+	 *            the starting point of the interval
+	 * @param ePoint
+	 *            the ending point of the interval
+	 * @param numOfMeshpoints
+	 *            the number of mesh points in the interval
+	 * @param init
+	 *	      the initial discrete partition
+	 */
+	 
+	 
+	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints, String[] init)
 	{
 		DiscretePDBaseComponent dspdha = new DiscretePDBaseComponent(numOfMeshpoints);
 		
