@@ -36,7 +36,8 @@ public class DiscretePDBaseComponent extends Component
 {
 	public LinkedHashMap<String, DiscretePDAutomatonMode> modes = new LinkedHashMap<String, DiscretePDAutomatonMode>();
 	public ArrayList<AutomatonTransition> transitions = new ArrayList<AutomatonTransition>();
-
+	public int discreteSize size = 1;
+	
 	/**
 	 * Create a new mode in this hybrid automaton. By default the invariant is null (must be
 	 * manually set) and the flows are x'=null for all x (these must be assigned), or flows can be
@@ -46,6 +47,12 @@ public class DiscretePDBaseComponent extends Component
 	 *            a name for the mode (must be unique)
 	 * @return the created PDAutomatonMode object
 	 */
+	 
+	public DiscretePDBaseComponent(int n){
+		if(n >= 1)
+			size = n;
+	} 
+	
 	public DiscretePDAutomatonMode createMode(String[] names)
 	{
 		DiscretePDAutomatonMode rv = new DiscretePDAutomatonMode(this, names);
@@ -367,37 +374,6 @@ public class DiscretePDBaseComponent extends Component
 
 		return rv;
 	}
-
-
-	/**
-	 * Discretize the one dimension interval, given starting point, ending point and the number of mesh points.
-	 * 
-	 * @param sPoint
-	 *            the starting point of the interval
-	 * @param ePoint
-	 *            the ending point of the interval
-	 * @param numOfMeshpoints
-	 *            the number of mesh points in the interval
-	 * @param init
-	 *	      the initial discrete partition
-	 */
-	 
-	 
-	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints, String[] init)
-	{
-		if(init.length != numOfMeshpoints)
-			throw new AutomatonValidationException("initial condition does not match mesh size.");
-			
-		DiscretePDBaseComponent dspdha = new DiscretePDBaseComponent(numOfMeshpoints);
-		
-		String[] discretePartition = init;	//Discrete partition is decided by the number of mesh points.
-		dspdha.createMode(discretePartition);
-		
-		
-
-		
-		
-		return dspdha;
-	}	
+	
 	
 }
