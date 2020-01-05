@@ -393,7 +393,7 @@ public class PDBaseComponent extends Component
 		DiscretePDBaseComponent dspdha = new DiscretePDBaseComponent(numOfMeshpoints);
 		
 		List<String> discretePartition = init;	//Discrete partition is decided by the number of mesh points.
-		dspdha.createMode(discretePartition);
+		dspdha.createMode(discretePartition, patialFlowDynamics);
 		
 				
 		return dspdha;
