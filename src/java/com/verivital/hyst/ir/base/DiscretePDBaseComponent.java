@@ -75,10 +75,10 @@ public class DiscretePDBaseComponent extends Component
 	 *            the dynamics for every variable
 	 * @return the created PDAutomatonMode object
 	 */
-	public DiscretePDAutomatonMode createMode(List<String> names, ExpressionInterval allDynamics)
+	public DiscretePDAutomatonMode createMode(List<String> names, ExpressionInterval patialFlowDynamics)
 	{
 		PDAutomatonMode am = createMode(names);
-
+		//do PDE discretization here
 		for (String v : variables)
 			am.patialFlowDynamics.put(v, allDynamics.copy());
 
