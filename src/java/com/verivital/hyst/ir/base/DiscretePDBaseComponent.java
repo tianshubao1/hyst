@@ -79,6 +79,10 @@ public class DiscretePDBaseComponent extends Component
 	{
 		PDAutomatonMode am = createMode(names);
 		//do PDE discretization here
+		if(patialFlowDynamics == "u__")
+			Expression = u_1 - 2*u_2 + u_3;	
+			
+			
 		for (String v : variables)
 			am.patialFlowDynamics.put(v, allDynamics.copy());
 
