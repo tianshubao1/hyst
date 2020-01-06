@@ -111,6 +111,11 @@ public class DiscretePDBaseComponent extends Component
 
 		rv.invariant = FormulaParser.parseInvariant(invariant);
 		Expression flowExpression = FormulaParser.parseFlow(flowString);
+		
+		//discretization
+		for(int i = 1; i <= size; i++){
+		
+		}
 		rv.patialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
 
 		for (Entry<String, Expression> e : AutomatonUtil
