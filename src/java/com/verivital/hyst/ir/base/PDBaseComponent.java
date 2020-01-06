@@ -385,7 +385,7 @@ public class PDBaseComponent extends Component
 	 */
 	 
 	 
-	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints, List<String> init)
+	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints, List<String> init, String patialFlowDynamics)
 	{
 		if(init.length() != numOfMeshpoints)
 			throw new AutomatonValidationException("initial condition does not match mesh size.");
