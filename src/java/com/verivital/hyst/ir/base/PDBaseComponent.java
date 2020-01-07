@@ -70,7 +70,7 @@ public class PDBaseComponent extends Component
 	 */
 	 
 	 
-	public PDAutomatonMode createMode(String name, PDExpressionInterval allDynamics)
+	public PDAutomatonMode createMode(String name, ExpressionInterval allDynamics)
 	{
 		PDAutomatonMode am = createMode(name);
 
