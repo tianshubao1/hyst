@@ -72,6 +72,50 @@ public class PDHAPrinter extends ToolPrinter
 		preconditions.skip(PreconditionsFlag.CONVERT_AFFINE_TERMS);
 	}
 
+
+	protected void printDocument(String originalFilename)
+	{
+		TreeMap<String, String> mapping = new TreeMap<String, String>();
+		mapping.put("t", "clock");
+		mapping.put("time", "clock_time");
+
+		RenameParams.run(config, mapping);
+
+		this.printCommentHeader();
+
+		Expression.expressionPrinter = new HyCompExpressionPrinter(); // TODO:
+																		// move
+																		// to
+																		// constructor?
+
+		// begin printing the actual program
+		printNewline();
+		printProcedure();
+	}
+
+	/**
+	 * Print the actual HyComp code
+	 */
+	private void printProcedure()
+	{
+		printmodule();
+
+		printVars();
+
+		// printSettings(); // TODO: print to other file or command line call
+
+		printConstants();
+
+		printModes();
+
+		printJumps();
+
+		printInitialStates();
+
+		printGoalStates();
+	}
+	
+	
 	public void setConfig(Configuration c)
 	{
 		this.config = c;
