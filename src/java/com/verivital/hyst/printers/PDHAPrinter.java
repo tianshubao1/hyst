@@ -231,13 +231,14 @@ public class PDHAPrinter extends ToolPrinter
 	 * 
 	 * @return the name of the tool
 	 */
-	public abstract String getToolName();
-
-	/**
-	 * Get the command line flag for this tool
-	 * 
-	 * @return
-	 */
+	public abstract String getToolName(){
+		
+		return "PDHA";
+		
+	}
+		
+		
+		
 	public String getCommandLineFlag(){
 	
 		return "-pdha";
