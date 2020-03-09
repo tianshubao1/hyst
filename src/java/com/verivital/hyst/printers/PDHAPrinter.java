@@ -241,7 +241,7 @@ public class PDHAPrinter extends ToolPrinter
 		
 	public String getCommandLineFlag(){
 	
-		return "-pdha";
+		return "pdha";
 		
 	};
 
