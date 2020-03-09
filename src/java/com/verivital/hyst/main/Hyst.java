@@ -81,7 +81,7 @@ public class Hyst
 	private final ToolPrinter[] printers = { new FlowstarPrinter(), new DReachPrinter(),
 			new HyCreate2Printer(), new HyCompPrinter(), new PythonQBMCPrinter(),
 			new SpaceExPrinter(), new SimulinkStateflowPrinter(), new PySimPrinter(),
-			new Hylaa2Printer() };
+			new Hylaa2Printer(), new PDHAPrinter() };
 
 	// list of supported model transformation passes (add new ones here)
 	private final TransformationPass[] passes = { new AddIdentityResetPass(),
