@@ -238,13 +238,13 @@ public class PDHAPrinter extends ToolPrinter
 	 * 
 	 * @return
 	 */
-	public abstract String getCommandLineFlag();
+	public String getCommandLineFlag(){
+	
+		return "-pdha";
+		
+	};
 
-	/**
-	 * Get a single-line comment character for the tool's output format
-	 * 
-	 * @return
-	 */
+	
 	protected abstract String getCommentPrefix();
 
 	/**
