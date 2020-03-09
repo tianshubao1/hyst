@@ -32,31 +32,17 @@ import com.verivital.hyst.util.PreconditionsFlag;
  */
 public class PDHAPrinter extends ToolPrinter
 {
-	// configuration being printer
-	protected Configuration config;
 
-	// parameters
-	protected String originalFilename = null; // assigned in setParameters
-	protected String baseName = null; // assigned in setParameters from
-										// originalFilename
-	protected String outputFilename = null; // assigned in setParameters, can be
-											// null
-	// don't need to be modified
-	protected String indentation = "";
-	protected String indentationAmount = "    ";
-	protected String commentChar = getCommentPrefix();
-	protected String decreaseIndentationString = "}";
+	@Option(name = "-time", usage = "reachability time", metaVar = "VAL")
+	String time = "auto";
 
-	// checks to do before printing (assign to the preconditions.skip in your
-	// ToolPrinter constructor to omit checks)
-	protected Preconditions preconditions = new Preconditions(false);
+	private BaseComponent ha;
 
-	// command line parser for tools
-	private CmdLineParser parser = new CmdLineParser(this);
-
-
-
-
+	/**
+	 * map from mode string names to numeric ids, starting from 1 and incremented
+	 */
+	private TreeMap<String, Integer> modeNamesToIds = new TreeMap<String, Integer>();
+	
 
 	@Override
 	protected String getCommentPrefix()
