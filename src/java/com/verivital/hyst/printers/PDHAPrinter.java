@@ -255,7 +255,7 @@ public class PDHAPrinter extends ToolPrinter
 	 */
 	public boolean isInRelease()
 	{
-		return false;
+		return true;
 	}
 
 
