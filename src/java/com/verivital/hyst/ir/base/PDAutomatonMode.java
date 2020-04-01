@@ -29,10 +29,7 @@ import com.verivital.hyst.util.AutomatonUtil;
  */
 public class PDAutomatonMode extends AutomatonMode
 {
-	public String name;
 	public final PDBaseComponent automaton;
-	public Expression invariant;
-	public boolean urgent = false;
 	public LinkedHashMap<String, ExpressionInterval> patialFlowDynamics;
 
 	/**
