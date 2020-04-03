@@ -3,271 +3,452 @@
  */
 package com.verivital.hyst.printers;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 
+import com.verivital.hyst.geometry.Interval;
+import com.verivital.hyst.grammar.formula.Constant;
+import com.verivital.hyst.grammar.formula.DefaultExpressionPrinter;
+import com.verivital.hyst.grammar.formula.Expression;
+import com.verivital.hyst.grammar.formula.Operation;
+import com.verivital.hyst.grammar.formula.Operator;
+import com.verivital.hyst.grammar.formula.Variable;
+import com.verivital.hyst.internalpasses.RenameParams;
 import com.verivital.hyst.ir.AutomatonExportException;
-import com.verivital.hyst.ir.Configuration;
+import com.verivital.hyst.ir.base.AutomatonMode;
+import com.verivital.hyst.ir.base.AutomatonTransition;
+import com.verivital.hyst.ir.base.PDHABaseComponent;
+import com.verivital.hyst.ir.base.ExpressionInterval;
 import com.verivital.hyst.main.Hyst;
-import com.verivital.hyst.main.HystFrame;
+import com.verivital.hyst.passes.basic.AddIdentityResetPass;
 import com.verivital.hyst.util.AutomatonUtil;
-import com.verivital.hyst.util.CmdLineRuntimeException;
-import com.verivital.hyst.util.Preconditions;
-import com.verivital.hyst.util.Preconditions.PreconditionsFailedException;
-import com.verivital.hyst.util.PreconditionsFlag;
 
 /**
- * A generic tool printer class. Printers for individual tools will override this abstract class.
- * The model is printed by using printConfiguration().
+ * Takes a hybrid automaton from the internal model format and outputs a dReach 2.0 model. Based on
+ * Chris' Boogie printer.
+ * 
+ * @author Stanley Bak (8-2014)
+ * @author Taylor Johnson (9-2014)
+ *
  */
-public class PDHAPrinter extends ToolPrinter
+public class DReachPrinter extends ToolPrinter
 {
-
 	@Option(name = "-time", usage = "reachability time", metaVar = "VAL")
 	String time = "auto";
 
-	private PDHABaseComponent ha;
+	private PDHABaseComponent pdha;
 
 	/**
 	 * map from mode string names to numeric ids, starting from 1 and incremented
 	 */
 	private TreeMap<String, Integer> modeNamesToIds = new TreeMap<String, Integer>();
-	
 
 	@Override
 	protected String getCommentPrefix()
 	{
-		return "%";
+		return "//";
 	}
-	
+
+	/**
+	 * This method starts the actual printing! Prepares variables etc. and calls printProcedure() to
+	 * print the BPL code
+	 */
 	protected void printDocument(String originalFilename)
 	{
-		TreeMap<String, String> mapping = new TreeMap<String, String>();
-		mapping.put("t", "clock");
-		mapping.put("time", "clock_time");
-
-		RenameParams.run(config, mapping);
+		renameVariables();
 
 		this.printCommentHeader();
-
-		Expression.expressionPrinter = new HyCompExpressionPrinter(); // TODO:
-																		// move
-																		// to
-																		// constructor?
 
 		// begin printing the actual program
 		printNewline();
 		printProcedure();
 	}
 
+	private void renameVariables()
+	{
+		TreeMap<String, String> mapping = new TreeMap<String, String>();
+		mapping.put("t", "clock");
+		mapping.put("time", "clock_time");
+
+		// also rename all variables that start with an underscore
+		Collection<String> names = pdha.getAllNames();
+
+		for (String name : names)
+		{
+			if (name.startsWith("_"))
+			{
+				String newName = AutomatonUtil.freshName("v" + name, names);
+				mapping.put(name, newName);
+			}
+		}
+
+		RenameParams.run(config, mapping);
+	}
+
 	/**
-	 * Print the actual HyComp code
+	 * Print the actual DReach code
 	 */
 	private void printProcedure()
 	{
 		printVars();
 
 		// printSettings(); // TODO: print to other file or command line call
-		
-		printInitialConditions();
-		
-		printInput();
 
-		printComputing();
+		printConstants();
 
-		printPlotting();
+		printModes();
 
+		printInitialStates();
+
+		printGoalStates();
 	}
-	
-	
+
+	/**
+	 * Print variable declarations and their initial value assignments plus a list of all constants
+	 */
 	private void printVars()
 	{
-		printLine("function heater_model");
+		printLine(commentChar + "Vars");
 
+		// time
+		String maxTime = time;
 
-		printComment("Locations are encoded as a variable with a finite (enumeration / set) type.");
-		this.increaseIndentation();
+		if (maxTime.equals("auto"))
+			maxTime = doubleToString(config.settings.spaceExConfig.timeHorizon);
 
+		printLine("[0, " + maxTime + "] time;");
 
-		printLine("h = 0.5");
-		printLine("delta = 0.5");
-		printLine("m = 10/h + 1;" + commentChar + "number of mesh points");
-		printLine("t = 10/deltat + 1;" + commentChar + "number of time steps");
-		printLine("alpha = deltat/(h*h);");
-		
-		printLine("A = zeros(m - 2, m - 2);");
-			
-		
-		this.decreaseIndentation();
-		
-	}	
-
-	private void printInitialConditions()
-	{
-		printNewline();		
-		this.increaseIndentation();
-		
-		printComment("Intial condition");
-		printLine("u0 = ones(m - 2, 1);");
-		printLine("u0 = u0 * 0.2;");
-																				// figure
-																				// out
-		this.decreaseIndentation();
+		for (String v : pdha.variables)
+			printLine("[-1000,1000] " + v + ";"); // TODO: get bounds
+													// automatically
 	}
-	
-	private void printInput()
-	{
-		printNewline();		
-		this.increaseIndentation();
-		
-		printComment("Input function");		
-		printLine("function f = input_fun(x)");	
-		printLine(indentation + "f = -0.1*x + 1;");
-		printLine("end");
-		
-		printNewline();			
-		printLine("load = zeros(m - 2, 1);");
-		printLine("u = zeros(m - 2, t);");
-		printLine("u(:,1) = u0;");
-		
-		this.decreaseIndentation();	
-	};
-	
-	
-	private void printComputing()
-	{
-		printNewline();	
-		this.increaseIndentation();	
 
-			printLine("for i = 2 : t");
+	/**
+	 * Print constants using #defines
+	 * 
+	 * This is more efficient than printing them as part of initial condition, since if we do that,
+	 * we'd have to declare them as variables, which will increase the state space size
+	 * 
+	 * As #defines, the pre-processor will just replace them as numbers
+	 * 
+	 * Note: in general, we may not always be able to just use #defines, for instance, if we have a
+	 * nondeterministic range in which case, we would need to introduce another variable and add
+	 * e.g. 0 <= A <= 5.2 as an initial condition constraint
+	 */
+	private void printConstants()
+	{
+		printLine("");
+
+		if (!pdha.constants.isEmpty())
+		{
+			for (Entry<String, Interval> e : pdha.constants.entrySet())
+			{
+				printLine("#define " + e.getKey() + "\t"
+						+ Double.toString(e.getValue().asConstant()));
+				// e.getKey(),Double.toString(e.getValue())
+			}
+		}
+
+		printLine("");
+	}
+
+	/**
+	 * Print initial states
+	 */
+	private void printInitialStates()
+	{
+		printNewline();
+		printLine("init:");
+
+		printLine("@" + modeNamesToIds.get(config.init.keySet().iterator().next()).toString() + " "
+				+ config.init.values().iterator().next() + ";");
+	}
+
+	/**
+	 * Print goal states
+	 */
+	private void printGoalStates()
+	{
+		printNewline();
+		printLine("goal:");
+
+		// outStream.print("@" + ModeNamesToIds.get(pdha.forbiddenMode).toString()
+		// + " ");
+		printLine("@" + modeNamesToIds.get(config.forbidden.keySet().iterator().next()).toString()
+				+ " " + config.forbidden.values().iterator().next() + ";");
+	}
+
+	/**
+	 * Prints the locations with their labels and everything that happens in them (invariant,
+	 * flow...)
+	 */
+	private void printModes()
+	{
+		printNewline();
+
+		printLine(commentChar + " start modes"); // start all modes
+
+		// modename
+		boolean first = true;
+
+		// first pass over to create ids
+		int id = 1;
+
+		for (String modeName : pdha.modes.keySet())
+			modeNamesToIds.put(modeName, id++);
+
+		for (Entry<String, AutomatonMode> e : pdha.modes.entrySet())
+		{
+			AutomatonMode mode = e.getValue();
+
+			if (first)
+				first = false;
+			else
+				printNewline();
+
+			String locName = e.getKey();
+			printLine(commentChar + " " + locName);
+			printLine("{");
+			printLine("mode " + modeNamesToIds.get(locName) + ";");
+
+			// invariant
+			printLine("invt:");
 			this.increaseIndentation();
 
-				printLine("for j = 1 : m - 2");	
+			if (!mode.invariant.equals(Constant.TRUE))
+				printLine(mode.invariant + ";");
 
-				this.increaseIndentation();
-
-					printLine("if i == 2");
-					printLine(indentationAmount + "load(j, 1) = deltat * input_fun(h * j);");
-					printLine("end");
-
-					printLine("if load(j, 1) == 0");
-					printLine(indentationAmount + "load(j, 1) = 0;");
-					printLine("else");
-					printLine(indentationAmount + "load(j, 1) = deltat * input_fun(h * j);");
-					printLine("end");
-
-					printComment("switching part");	
-
-					printLine("if u(j, i - 1) > 0.7");
-					printLine(indentationAmount + "load(j, 1) = 0;");
-					printLine("elseif u(j, i - 1) < 0.4");
-					printLine(indentationAmount + "load(j, 1) = deltat * input_fun(h * j);");
-					printLine("end");
-
-				this.decreaseIndentation();
-				printLine("end");
-
-			printLine("u(:, i) = A * u(:, i - 1) + load;");	
 			this.decreaseIndentation();
-			printLine("end");
 
-		this.decreaseIndentation();
-	
-	};	
-	
-	private void printPlotting()
-	{
+			printLine("flow:");
+			this.increaseIndentation();
 
-		printNewline();		
-		this.increaseIndentation();
-		
-		printComment("Plotting");
-		printLine("xlist = linspace(0,10,m);");	
-		printLine("tlist = linspace(0,10,t);");
-		printLine("u = [zeros(1, t); u; zeros(1, t)];");
-		printLine("u = u';");
-		
-		printLine("surf(xlist,tlist,u)");	
-		printLine("title('Numerical solution computed with 100 mesh points.')");
-		printLine("xlabel('Distance x')");
-		printLine("ylabel('Time t')");		
+			for (Entry<String, ExpressionInterval> entry : mode.flowDynamics.entrySet())
+			{
+				ExpressionInterval ei = entry.getValue();
 
-		printLine("figure");	
-		printLine("plot(xlist,u(91,:))");
-		printLine("title('Solution at t = 9')");
-		printLine("xlabel('Distance x')");	
-		printLine("ylabel('u(x,5)')");
-		
-		printLine("figure");	
-		printLine("plot(tlist,u(:,5))");
-		printLine("title('Solution at x = 4')");
-		printLine("xlabel('Time t')");	
-		printLine("ylabel('u(0,t)')");	
+				if (ei.getInterval() != null)
+					throw new AutomatonExportException(
+							"dReach doesn't support nondeterministic flows. Error exporting "
+									+ "flow for variable " + entry.getKey() + ": " + ei);
 
-		
-		this.decreaseIndentation();
-		
-		printLine("end");
-	
-	};
+				printLine(
+						"d/dt[" + entry.getKey() + "] = " + entry.getValue().asExpression() + ";");
+			}
 
-	
+			this.decreaseIndentation();
 
+			printJumps(mode);
 
+			printLine(commentChar + " end " + locName);
+			printLine("}");
+			this.indentation = "";
+		}
 
-
-	/**
-	 * Get a string representation of the name of the tool, such as "SpaceEx" or "Flow*"
-	 * 
-	 * @return the name of the tool
-	 */
-	public abstract String getToolName(){
-		
-		return "PDHA";
-		
+		printLine(commentChar + " end modes"); // end all modes
 	}
-		
-		
-		
-	public String getCommandLineFlag(){
-	
-		return "pdha";
-		
-	};
 
-	
-	protected abstract String getCommentPrefix();
+	private void printJumps(AutomatonMode mode)
+	{
+		printNewline();
+		printLine("jump:");
+		this.increaseIndentation();
+		int fromId = modeNamesToIds.get(mode.name);
 
-	/**
-	 * Should this tool be considered release-quality, which will make it show up in the GUI
-	 * 
-	 * @return
-	 */
+		boolean first = true;
+
+		for (AutomatonTransition t : pdha.transitions)
+		{
+			if (t.from != mode)
+				continue;
+
+			if (first)
+				first = false;
+			else
+				printNewline();
+
+			String toName = t.to.name;
+			int toId = modeNamesToIds.get(toName);
+
+			printLine(commentChar + " " + mode.name + " -> " + toName + " (" + fromId + " -> "
+					+ toId + ")");
+
+			this.increaseIndentation();
+
+			String line = "";
+
+			if (t.guard != Constant.TRUE)
+				line += t.guard + " ==> @" + this.modeNamesToIds.get(toName);
+			else
+				line += "(true) ==> @" + this.modeNamesToIds.get(toName);
+
+			Map<String, ExpressionInterval> reset = t.reset;
+
+			// TODO: this check was to 0, but we could have a model with 0 vars,
+			// which then would have no resets, and that would be fine
+			if (reset.size() != ha.variables.size())
+				throw new AutomatonExportException(
+						"Since dReach requires identity resets, it should never be null (but reset was null): "
+								+ reset);
+
+			// should be be of the form (and (x' = x + 1) (y' = x + y) (z' = z))
+			Operation resetExp = new Operation(Operator.AND);
+
+			for (Entry<String, ExpressionInterval> e : reset.entrySet())
+			{
+				ExpressionInterval ei = e.getValue();
+
+				if (ei.getInterval() == null)
+				{
+					Expression exp = new Operation(Operator.EQUAL, new Variable(e.getKey() + "'"),
+							e.getValue().asExpression());
+
+					resetExp.children.add(exp);
+				}
+				else
+				{
+					Interval i = ei.getInterval();
+					// interval is nonnull, nondeterministic reset
+
+					Operation lowerBound = new Operation(Operator.GREATEREQUAL,
+							new Variable(e.getKey() + "'"), new Operation(Operator.ADD,
+									e.getValue().getExpression(), new Constant(i.min)));
+
+					Operation upperBound = new Operation(Operator.LESSEQUAL,
+							new Variable(e.getKey() + "'"), new Operation(Operator.ADD,
+									e.getValue().getExpression(), new Constant(i.max)));
+
+					resetExp.children.add(lowerBound);
+					resetExp.children.add(upperBound);
+				}
+			}
+
+			line += resetExp + ";";
+			printLine(line);
+
+			this.decreaseIndentation();
+		}
+
+		printNewline();
+		this.decreaseIndentation();
+	}
+
+	// custom printer for dreach expressions, mix of infix and prefix
+	public static class DReachExpressionPrinter extends DefaultExpressionPrinter
+	{
+		public DReachExpressionPrinter()
+		{
+			super();
+
+			opNames.put(Operator.AND, "and");
+			opNames.put(Operator.OR, "or");
+			opNames.put(Operator.POW, "^");
+
+			// force to print decimals
+			constFormatter.setMinimumFractionDigits(1);
+		}
+
+		public String printOperation(Operation o)
+		{
+			String rv = null;
+
+			Operator op = o.op;
+
+			// dreach expects a mix of infix and prefix
+			switch (op)
+			{
+			case MULTIPLY:
+			case DIVIDE:
+			case ADD:
+			case SUBTRACT:
+			case POW:
+				// default
+				rv = super.printOperation(o);
+				break;
+			case EQUAL:
+			case LESS:
+			case GREATER:
+			case LESSEQUAL:
+			case GREATEREQUAL:
+			case NOTEQUAL:
+				// infix
+				rv = "(" + print(o.getLeft()) + " " + opNames.get(op) + " " + print(o.getRight())
+						+ ")";
+				break;
+			case NEGATIVE:
+				rv = "-" + print(o.children.get(0));
+				break;
+			default:
+				// prefix
+				rv = "(" + opNames.get(op);
+
+				for (Expression e : o.children)
+					rv += " " + print(e);
+
+				rv += ")";
+				break;
+			}
+
+			return rv;
+		}
+	}
+
+	@Override
+	protected void printAutomaton()
+	{
+		Expression.expressionPrinter = new DReachExpressionPrinter(); // TODO:
+																		// move
+																		// to
+																		// constructor?
+
+		this.pdha = (PDHABaseComponent) config.root;
+
+		if (config.forbidden.size() == 0)
+		{
+			Hyst.log(
+					"DReach Printer: using initial states as forbidden states since forbidden states are not defined in model.");
+			config.forbidden = config.init;
+		}
+
+		// remove this after proper support for multiple initial modes is added
+		if (config.init.size() != 1)
+			throw new AutomatonExportException(
+					"Printer currently only supports single-initial-state models");
+		else if (config.forbidden.size() != 1)
+			throw new AutomatonExportException(
+					"Printer currently only supports single-forbidden-state models");
+
+		// transform resets to include identity expressions
+		new AddIdentityResetPass().runTransformationPass(config, null);
+
+		printDocument(originalFilename);
+	}
+
+	@Override
+	public String getToolName()
+	{
+		return "dReach";
+	}
+
+	@Override
+	public String getCommandLineFlag()
+	{
+		return "dreach";
+	}
+
+	@Override
 	public boolean isInRelease()
 	{
 		return true;
 	}
 
-
-	/**
-	 * Get the default extension for model files for this printer
-	 * 
-	 * @return the default extension, or null
-	 */
+	@Override
 	public String getExtension()
 	{
-		return .m;
+		return ".drh";
 	}
-
-
 }
