@@ -35,7 +35,7 @@ import com.verivital.hyst.util.AutomatonUtil;
  * @author Taylor Johnson (9-2014)
  *
  */
-public class DReachPrinter extends ToolPrinter
+public class PDHAPrinter extends ToolPrinter
 {
 	@Option(name = "-time", usage = "reachability time", metaVar = "VAL")
 	String time = "auto";
