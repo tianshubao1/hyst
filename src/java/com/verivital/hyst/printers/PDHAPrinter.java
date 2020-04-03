@@ -36,7 +36,7 @@ public class PDHAPrinter extends ToolPrinter
 	@Option(name = "-time", usage = "reachability time", metaVar = "VAL")
 	String time = "auto";
 
-	private BaseComponent ha;
+	private PDHABaseComponent ha;
 
 	/**
 	 * map from mode string names to numeric ids, starting from 1 and incremented
