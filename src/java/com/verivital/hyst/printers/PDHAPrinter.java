@@ -431,13 +431,13 @@ public class PDHAPrinter extends ToolPrinter
 	@Override
 	public String getToolName()
 	{
-		return "dReach";
+		return "PDHA";
 	}
 
 	@Override
 	public String getCommandLineFlag()
 	{
-		return "dreach";
+		return "pdha";
 	}
 
 	@Override
