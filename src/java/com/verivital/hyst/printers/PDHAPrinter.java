@@ -449,6 +449,6 @@ public class PDHAPrinter extends ToolPrinter
 	@Override
 	public String getExtension()
 	{
-		return ".drh";
+		return ".m";
 	}
 }
