@@ -21,7 +21,7 @@ import com.verivital.hyst.internalpasses.RenameParams;
 import com.verivital.hyst.ir.AutomatonExportException;
 import com.verivital.hyst.ir.base.AutomatonMode;
 import com.verivital.hyst.ir.base.AutomatonTransition;
-import com.verivital.hyst.ir.base.PDHABaseComponent;
+import com.verivital.hyst.ir.base.PDBaseComponent;
 import com.verivital.hyst.ir.base.ExpressionInterval;
 import com.verivital.hyst.main.Hyst;
 import com.verivital.hyst.passes.basic.AddIdentityResetPass;
@@ -40,7 +40,7 @@ public class PDHAPrinter extends ToolPrinter
 	@Option(name = "-time", usage = "reachability time", metaVar = "VAL")
 	String time = "auto";
 
-	private PDHABaseComponent pdha;
+	private PDBaseComponent pdha;
 
 	/**
 	 * map from mode string names to numeric ids, starting from 1 and incremented
