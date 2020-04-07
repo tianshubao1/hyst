@@ -32,7 +32,7 @@ import com.verivital.hyst.util.AutomatonUtil;
  * @author Stanley Bak (stanleybak@gmail.com)
  *
  */
-public class PDBaseComponent extends Component
+public class PDHABaseComponent extends BaseComponent
 {
 	public LinkedHashMap<String, PDAutomatonMode> modes = new LinkedHashMap<String, PDAutomatonMode>();
 	public ArrayList<AutomatonTransition> transitions = new ArrayList<AutomatonTransition>();
@@ -46,9 +46,10 @@ public class PDBaseComponent extends Component
 	 *            a name for the mode (must be unique)
 	 * @return the created PDAutomatonMode object
 	 */
-	public PDAutomatonMode createMode(String name)
+  @Override 
+	public PDHABaseComponent createMode(String name)
 	{
-		PDAutomatonMode rv = new PDAutomatonMode(this, name);
+		PDHABaseComponent rv = new PDHABaseComponent(this, name);
 
 		if (modes.containsKey(name))
 			throw new AutomatonValidationException("Mode with name '" + name + "' already exists.");
@@ -68,8 +69,7 @@ public class PDBaseComponent extends Component
 	 *            the dynamics for every variable
 	 * @return the created PDAutomatonMode object
 	 */
-	 
-	 
+  @Override 
 	public PDAutomatonMode createMode(String name, ExpressionInterval allDynamics)
 	{
 		PDAutomatonMode am = createMode(name);
@@ -91,9 +91,10 @@ public class PDBaseComponent extends Component
 	 *            the mode flow expression
 	 * @return the created Mode
 	 */
-	public PDAutomatonMode createMode(String name, String invariant, String partialFlowString)
+  @Override 
+	public PDAutomatonMode createMode(String name, String invariant, String flowString)
 	{
-		PDAutomatonMode rv = new PDAutomatonMode(this, name);
+		PDAutomatonMode  rv = new PDAutomatonMode(this, name);
 
 		if (modes.containsKey(name))
 			throw new AutomatonValidationException("Mode with name '" + name + "' already exists.");
@@ -101,7 +102,7 @@ public class PDBaseComponent extends Component
 		modes.put(name, rv);
 
 		rv.invariant = FormulaParser.parseInvariant(invariant);
-		Expression flowExpression = FormulaParser.parseFlow(partialFlowString);
+		Expression flowExpression = FormulaParser.parseFlow(flowString);
 		rv.patialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
 
 		for (Entry<String, Expression> e : AutomatonUtil
@@ -121,6 +122,7 @@ public class PDBaseComponent extends Component
 	 *            the destination
 	 * @return the created AutomatonTransition object
 	 */
+  @Override 
 	public AutomatonTransition createTransition(PDAutomatonMode from, PDAutomatonMode to)
 	{
 		AutomatonTransition rv = new AutomatonTransition(this, from, to);
@@ -141,6 +143,7 @@ public class PDBaseComponent extends Component
 	 * @throws AutomatonValidationException
 	 *             if guarantees are violated
 	 */
+  @Override 
 	public void validate()
 	{
 		if (!Configuration.DO_VALIDATION)
@@ -187,7 +190,7 @@ public class PDBaseComponent extends Component
 
 			if (!found)
 			{
-				String msg = "Exported label '" + label + "' was not used in PDBaseComponent '"
+				String msg = "Exported label '" + label + "' was not used in PDHABaseComponent '"
 						+ getPrintableInstanceName() + "'.";
 				Hyst.log(msg
 						+ " This would block all transitions using this label in other components, and is typically a mistake.");
@@ -199,7 +202,7 @@ public class PDBaseComponent extends Component
 		// variables
 		Set<String> firstModeFlows = null;
 		String firstModeName = null;
-
+    
 		for (Entry<String, PDAutomatonMode> e : modes.entrySet())
 		{
 			String name = e.getKey();
@@ -219,14 +222,14 @@ public class PDBaseComponent extends Component
 			{
 				if (!flows.equals(firstModeFlows))
 				{
-					throw new AutomatonValidationException("PDBaseComponent "
+					throw new AutomatonValidationException("PDHABaseComponent "
 							+ getPrintableInstanceName()
 							+ ": Variables with defined flows in mode '" + firstModeName + "' ("
 							+ firstModeFlows + ") differ from mode '" + name + "' (" + flows + ")");
 				}
 			}
 
-			for (Entry<String, ExpressionInterval> entry : am.patialFlowDynamics.entrySet())
+			for (Entry<String, ExpressionInterval> entry : am.flowDynamics.entrySet())
 			{
 				Expression exp = entry.getValue().getExpression();
 
@@ -236,7 +239,7 @@ public class PDBaseComponent extends Component
 				}
 				catch (AutomatonValidationException ave)
 				{
-					throw new AutomatonValidationException("PDBaseComponent "
+					throw new AutomatonValidationException("PDHABaseComponent "
 							+ getPrintableInstanceName() + ": Flow in mode '" + am.name
 							+ "' for variable '" + entry.getKey() + "'='" + exp.toDefaultString()
 							+ "' uses a variable/constant not in the component. "
@@ -252,6 +255,7 @@ public class PDBaseComponent extends Component
 	 * @param e
 	 *            the expression to check
 	 */
+  @Override 
 	private void checkExpression(Expression e)
 	{
 		if (e instanceof Variable)
@@ -276,7 +280,7 @@ public class PDBaseComponent extends Component
 	{
 		StringBuilder str = new StringBuilder();
 
-		str.append("[PDBaseComponent: ");
+		str.append("[PDHABaseComponent: ");
 
 		str.append(super.toString());
 
@@ -313,7 +317,7 @@ public class PDBaseComponent extends Component
 	@Override
 	protected Component copyComponent()
 	{
-		PDBaseComponent rv = new PDBaseComponent();
+		PDHABaseComponent rv = new PDHABaseComponent();
 
 		// copy modes
 		for (Entry<String, PDAutomatonMode> e : modes.entrySet())
@@ -354,6 +358,7 @@ public class PDBaseComponent extends Component
 	 *            the mode to
 	 * @return the first transition between modes named 'from' and 'to', or null if not found
 	 */
+  @Override 
 	public AutomatonTransition findTransition(String from, String to)
 	{
 		AutomatonTransition rv = null;
@@ -370,32 +375,5 @@ public class PDBaseComponent extends Component
 		return rv;
 	}
 	
-	
-	/**
-	 * Discretize the one dimension interval, given starting point, ending point and the number of mesh points.
-	 * 
-	 * @param sPoint
-	 *            the starting point of the interval
-	 * @param ePoint
-	 *            the ending point of the interval
-	 * @param numOfMeshpoints
-	 *            the number of mesh points in the interval
-	 * @param init
-	 *	      the initial discrete partition
-	 */
-	 
-	 
-	public DiscretePDBaseComponent discretize(int sPoint, int ePoint, int numOfMeshpoints, List<String> init, String patialFlowDynamics)
-	{
-		if(init.length() != numOfMeshpoints)
-			throw new AutomatonValidationException("initial condition does not match mesh size.");
-			
-		DiscretePDBaseComponent dspdha = new DiscretePDBaseComponent(numOfMeshpoints);
-		
-		List<String> discretePartition = init;	//Discrete partition is decided by the number of mesh points.
-		dspdha.createMode(discretePartition, patialFlowDynamics);
-		
-				
-		return dspdha;
-	}
+
 }
