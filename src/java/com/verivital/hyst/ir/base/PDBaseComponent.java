@@ -318,7 +318,7 @@ public class PDBaseComponent extends Component
 
 	protected Component copyComponent()
 	{
-		PDHABaseComponent rv = new PDHABaseComponent();
+		PDBaseComponent rv = new PDBaseComponent();
 
 		// copy modes
 		for (Entry<String, PDAutomatonMode> e : modes.entrySet())
