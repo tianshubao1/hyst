@@ -28,9 +28,9 @@ import com.verivital.hyst.util.AutomatonUtil;
  * @author Stanley Bak (stanleybak@gmail.com)
  *
  */
-public class DiscretePDAutomatonMode extends AutomatonMode
+public class DiscretePDAutomatonMode
 {
-	public List<String> dspdnames;
+	public List<String> names;
 	public final DiscretePDBaseComponent automaton;
 	public Expression invariant;
 	public boolean urgent = false;
