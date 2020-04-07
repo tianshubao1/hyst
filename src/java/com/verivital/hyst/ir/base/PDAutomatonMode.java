@@ -27,7 +27,7 @@ import com.verivital.hyst.util.AutomatonUtil;
  * @author Stanley Bak (stanleybak@gmail.com)
  *
  */
-public class PDAutomatonMode extends AutomatonMode
+public class PDAutomatonMode
 {
 	public final PDBaseComponent automaton;
 	public LinkedHashMap<String, ExpressionInterval> patialFlowDynamics;
