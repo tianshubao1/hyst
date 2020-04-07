@@ -33,7 +33,7 @@ import com.verivital.hyst.util.AutomatonUtil;
  * @author Stanley Bak (stanleybak@gmail.com)
  *
  */
-public class PDHABaseComponent extends Component
+public class PDBaseComponent extends Component
 {
 	public LinkedHashMap<String, PDAutomatonMode> modes = new LinkedHashMap<String, PDAutomatonMode>();
 	public ArrayList<AutomatonTransition> transitions = new ArrayList<AutomatonTransition>();
