@@ -47,7 +47,7 @@ public class PDBaseComponent extends Component
 	 *            a name for the mode (must be unique)
 	 * @return the created PDAutomatonMode object
 	 */
-  @Override 
+ 
 	public PDBaseComponent createMode(String name)
 	{
 		PDBaseComponent rv = new PDBaseComponent(this, name);
@@ -70,7 +70,7 @@ public class PDBaseComponent extends Component
 	 *            the dynamics for every variable
 	 * @return the created PDAutomatonMode object
 	 */
-  @Override 
+
 	public PDAutomatonMode createMode(String name, ExpressionInterval allDynamics)
 	{
 		PDAutomatonMode am = createMode(name);
@@ -92,7 +92,7 @@ public class PDBaseComponent extends Component
 	 *            the mode flow expression
 	 * @return the created Mode
 	 */
-  @Override 
+ 
 	public PDAutomatonMode createMode(String name, String invariant, String flowString)
 	{
 		PDAutomatonMode  rv = new PDAutomatonMode(this, name);
@@ -123,7 +123,7 @@ public class PDBaseComponent extends Component
 	 *            the destination
 	 * @return the created AutomatonTransition object
 	 */
-  @Override 
+
 	public AutomatonTransition createTransition(PDAutomatonMode from, PDAutomatonMode to)
 	{
 		AutomatonTransition rv = new AutomatonTransition(this, from, to);
@@ -144,7 +144,7 @@ public class PDBaseComponent extends Component
 	 * @throws AutomatonValidationException
 	 *             if guarantees are violated
 	 */
-  @Override 
+
 	public void validate()
 	{
 		if (!Configuration.DO_VALIDATION)
@@ -256,7 +256,7 @@ public class PDBaseComponent extends Component
 	 * @param e
 	 *            the expression to check
 	 */
-  @Override 
+ 
 	private void checkExpression(Expression e)
 	{
 		if (e instanceof Variable)
@@ -301,7 +301,7 @@ public class PDBaseComponent extends Component
 		return str.toString();
 	}
 
-	@Override
+
 	public Collection<String> getAllVariables()
 	{
 		ArrayList<String> rv = new ArrayList<String>(variables.size());
@@ -315,7 +315,7 @@ public class PDBaseComponent extends Component
 		return rv;
 	}
 
-	@Override
+
 	protected Component copyComponent()
 	{
 		PDHABaseComponent rv = new PDHABaseComponent();
@@ -359,7 +359,7 @@ public class PDBaseComponent extends Component
 	 *            the mode to
 	 * @return the first transition between modes named 'from' and 'to', or null if not found
 	 */
-  @Override 
+
 	public AutomatonTransition findTransition(String from, String to)
 	{
 		AutomatonTransition rv = null;
