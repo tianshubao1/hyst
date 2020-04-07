@@ -36,7 +36,7 @@ public class DiscretePDBaseComponent extends Component
 {
 	public LinkedHashMap<String, DiscretePDAutomatonMode> modes = new LinkedHashMap<String, DiscretePDAutomatonMode>();
 	public ArrayList<AutomatonTransition> transitions = new ArrayList<AutomatonTransition>();
-	public int discreteSize size = 1;
+	public int discreteSize = 1;
 	
 	/**
 	 * Create a new mode in this hybrid automaton. By default the invariant is null (must be
