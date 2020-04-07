@@ -1,6 +1,7 @@
 package com.verivital.hyst.ir.base;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
@@ -29,7 +30,7 @@ import com.verivital.hyst.util.AutomatonUtil;
  */
 public class DiscretePDAutomatonMode extends AutomatonMode
 {
-	public ArrayList<String> names;
+	public List<String> names;
 	public final DiscretePDBaseComponent automaton;
 	public Expression invariant;
 	public boolean urgent = false;
