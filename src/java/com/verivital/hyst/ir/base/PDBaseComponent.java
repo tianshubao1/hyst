@@ -48,9 +48,9 @@ public class PDBaseComponent extends Component
 	 * @return the created PDAutomatonMode object
 	 */
   @Override 
-	public PDHABaseComponent createMode(String name)
+	public PDBaseComponent createMode(String name)
 	{
-		PDHABaseComponent rv = new PDHABaseComponent(this, name);
+		PDBaseComponent rv = new PDBaseComponent(this, name);
 
 		if (modes.containsKey(name))
 			throw new AutomatonValidationException("Mode with name '" + name + "' already exists.");
