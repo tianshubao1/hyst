@@ -1,6 +1,7 @@
 package com.verivital.hyst.ir.base;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
