@@ -24,9 +24,9 @@ public class PDAutomatonTransition
 {
 	public static final Expression DEFAULT_GUARD = Constant.TRUE;
 
-	public BaseComponent parent;
-	public AutomatonMode from;
-	public AutomatonMode to;
+	public PDBaseComponent parent;
+	public PDAutomatonMode from;
+	public PDAutomatonMode to;
 	public String label;
 
 	public Expression guard;
