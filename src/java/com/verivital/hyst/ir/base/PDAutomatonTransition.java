@@ -87,7 +87,7 @@ public class PDAutomatonTransition
 			throw new AutomatonExportException("Destination mode ('" + to.name
 					+ "') not found in parent automaton: " + parent.getPrintableInstanceName());
 
-		AutomatonTransition rv = parent.createTransition(parentFrom, parentTo);
+		PDAutomatonTransition rv = parent.createTransition(parentFrom, parentTo);
 
 		rv.guard = guard.copy();
 
