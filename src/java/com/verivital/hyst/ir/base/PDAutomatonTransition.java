@@ -64,7 +64,7 @@ public class PDAutomatonTransition
 	/**
 	 * Deep copy. This also updates the transitions in the passed-in parent HybridAutomaton
 	 */
-	public AutomatonTransition copy(PDBaseComponent parent)
+	public PDAutomatonTransition copy(PDBaseComponent parent)
 	{
 		// parent may be different, so search for from.name and to.name in
 		// parent
