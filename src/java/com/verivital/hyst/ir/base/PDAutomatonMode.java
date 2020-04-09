@@ -29,12 +29,11 @@ import com.verivital.hyst.util.AutomatonUtil;
  */
 public class PDAutomatonMode
 {
-	
 	public String name;
-	public Expression invariant;
-	public boolean urgent = false;	
 	public final PDBaseComponent automaton;
-	public LinkedHashMap<String, ExpressionInterval> patialFlowDynamics;
+	public Expression invariant;
+	public boolean urgent = false;
+	public LinkedHashMap<String, ExpressionInterval> partialFlowDynamics;
 
 	/**
 	 * The correct way to create a new automaton mode is using HybridAutomaton.createMode(name),
@@ -43,16 +42,18 @@ public class PDAutomatonMode
 	 * @param ha
 	 *            the hybrid automaton
 	 */
+
+
 	PDAutomatonMode(PDBaseComponent pdha, String name)
 	{
 		this.name = name;
 		automaton = pdha;
 
 		invariant = null; // this MUST be set, otherwise validation will fail
-		patialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
+		partialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
 
 		for (String s : pdha.variables)
-			patialFlowDynamics.put(s, null); // these MUST be set or removed,
+			partialFlowDynamics.put(s, null); // these MUST be set or removed,
 										// otherwise validation will fail
 	}
 
@@ -64,7 +65,7 @@ public class PDAutomatonMode
 	 *             if guarantees are violated
 	 */
 	 
-	@Override
+
 	public void validate()
 	{
 		if (!Configuration.DO_VALIDATION)
@@ -86,16 +87,16 @@ public class PDAutomatonMode
 		if (invariant.equals(Constant.FALSE))
 			throw new AutomatonValidationException("invariant was equal to Constant.FALSE");
 
-		if (patialFlowDynamics == null && urgent == false)
-			throw new AutomatonValidationException("patialFlowDynamics was null but urgent was false");
+		if (partialFlowDynamics == null && urgent == false)
+			throw new AutomatonValidationException("partialFlowDynamics was null but urgent was false");
 
-		if (urgent == true && patialFlowDynamics != null)
+		if (urgent == true && partialFlowDynamics != null)
 			throw new AutomatonValidationException("Mode '" + name
-					+ "' was urgent, but dynamics were also defined: " + patialFlowDynamics);
+					+ "' was urgent, but dynamics were also defined: " + partialFlowDynamics);
 
-		if (patialFlowDynamics != null)
+		if (partialFlowDynamics != null)
 		{
-			for (String s : patialFlowDynamics.keySet())
+			for (String s : partialFlowDynamics.keySet())
 			{
 				if (!automaton.variables.contains(s))
 				{
@@ -112,7 +113,7 @@ public class PDAutomatonMode
 
 		if (!urgent)
 		{
-			for (Entry<String, ExpressionInterval> entry : patialFlowDynamics.entrySet())
+			for (Entry<String, ExpressionInterval> entry : partialFlowDynamics.entrySet())
 			{
 				ExpressionInterval ei = entry.getValue();
 
@@ -127,8 +128,8 @@ public class PDAutomatonMode
 	public String toString()
 	{
 		return "[PDAutomatonMode name:" + name + ", urgent: " + urgent + ", invariant: "
-				+ DefaultExpressionPrinter.instance.print(invariant) + ", patialFlowDynamics: "
-				+ AutomatonUtil.getMapExpressionIntervalString(patialFlowDynamics) + "]";
+				+ DefaultExpressionPrinter.instance.print(invariant) + ", partialFlowDynamics: "
+				+ AutomatonUtil.getMapExpressionIntervalString(partialFlowDynamics) + "]";
 	}
 
 	/**
@@ -146,13 +147,13 @@ public class PDAutomatonMode
 
 		rv.invariant = invariant.copy();
 
-		if (patialFlowDynamics != null)
+		if (partialFlowDynamics != null)
 		{
-			for (Entry<String, ExpressionInterval> e : patialFlowDynamics.entrySet())
-				rv.patialFlowDynamics.put(e.getKey(), e.getValue().copy());
+			for (Entry<String, ExpressionInterval> e : partialFlowDynamics.entrySet())
+				rv.partialFlowDynamics.put(e.getKey(), e.getValue().copy());
 		}
 		else
-			rv.patialFlowDynamics = null;
+			rv.partialFlowDynamics = null;
 
 		rv.urgent = urgent;
 
@@ -171,10 +172,10 @@ public class PDAutomatonMode
 		PDAutomatonMode rv = copy(automaton, newName);
 
 		// also copy the transitions
-		ArrayList<AutomatonTransition> fromCopy = new ArrayList<AutomatonTransition>();
-		ArrayList<AutomatonTransition> toCopy = new ArrayList<AutomatonTransition>();
+		ArrayList<PDAutomatonTransition> fromCopy = new ArrayList<PDAutomatonTransition>();
+		ArrayList<PDAutomatonTransition> toCopy = new ArrayList<PDAutomatonTransition>();
 
-		for (AutomatonTransition at : automaton.transitions)
+		for (PDAutomatonTransition at : automaton.transitions)
 		{
 			if (at.from == this && at.to == this)
 				throw new AutomatonExportException(
@@ -185,10 +186,10 @@ public class PDAutomatonMode
 				toCopy.add(at);
 		}
 
-		for (AutomatonTransition at : fromCopy)
+		for (PDAutomatonTransition at : fromCopy)
 			at.copy(automaton).from = rv;
 
-		for (AutomatonTransition at : toCopy)
+		for (PDAutomatonTransition at : toCopy)
 			at.copy(automaton).to = rv;
 
 		return rv;
