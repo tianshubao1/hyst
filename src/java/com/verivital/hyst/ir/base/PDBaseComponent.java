@@ -36,7 +36,7 @@ import com.verivital.hyst.util.AutomatonUtil;
 public class PDBaseComponent extends Component
 {
 	public LinkedHashMap<String, PDAutomatonMode> modes = new LinkedHashMap<String, PDAutomatonMode>();
-	public ArrayList<AutomatonTransition> transitions = new ArrayList<AutomatonTransition>();
+	public ArrayList<PDAutomatonTransition> transitions = new ArrayList<PDAutomatonTransition>();
 
 	/**
 	 * Create a new mode in this hybrid automaton. By default the invariant is null (must be
@@ -48,9 +48,10 @@ public class PDBaseComponent extends Component
 	 * @return the created PDAutomatonMode object
 	 */
  
-	public PDBaseComponent createMode(String name)
+
+	public PDAutomatonMode createMode(String name)
 	{
-		PDBaseComponent rv = new PDBaseComponent(this, name);
+		PDAutomatonMode rv = new PDAutomatonMode(this, name);
 
 		if (modes.containsKey(name))
 			throw new AutomatonValidationException("Mode with name '" + name + "' already exists.");
@@ -71,12 +72,13 @@ public class PDBaseComponent extends Component
 	 * @return the created PDAutomatonMode object
 	 */
 
+	
 	public PDAutomatonMode createMode(String name, ExpressionInterval allDynamics)
 	{
 		PDAutomatonMode am = createMode(name);
 
 		for (String v : variables)
-			am.patialFlowDynamics.put(v, allDynamics.copy());
+			am.partialFlowDynamics.put(v, allDynamics.copy());
 
 		return am;
 	}
@@ -92,7 +94,7 @@ public class PDBaseComponent extends Component
 	 *            the mode flow expression
 	 * @return the created Mode
 	 */
- 
+
 	public PDAutomatonMode createMode(String name, String invariant, String flowString)
 	{
 		PDAutomatonMode  rv = new PDAutomatonMode(this, name);
@@ -104,11 +106,11 @@ public class PDBaseComponent extends Component
 
 		rv.invariant = FormulaParser.parseInvariant(invariant);
 		Expression flowExpression = FormulaParser.parseFlow(flowString);
-		rv.patialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
+		rv.partialFlowDynamics = new LinkedHashMap<String, ExpressionInterval>();
 
 		for (Entry<String, Expression> e : AutomatonUtil
 				.parseFlowExpression(variables, flowExpression).entrySet())
-			rv.patialFlowDynamics.put(e.getKey(), new ExpressionInterval(e.getValue()));
+			rv.partialFlowDynamics.put(e.getKey(), new ExpressionInterval(e.getValue()));
 
 		return rv;
 	}
@@ -123,10 +125,10 @@ public class PDBaseComponent extends Component
 	 *            the destination
 	 * @return the created AutomatonTransition object
 	 */
-
-	public AutomatonTransition createTransition(PDAutomatonMode from, PDAutomatonMode to)
+  
+	public PDAutomatonTransition createTransition(PDAutomatonMode from, PDAutomatonMode to)
 	{
-		AutomatonTransition rv = new AutomatonTransition(this, from, to);
+		PDAutomatonTransition rv = new PDAutomatonTransition(this, from, to);
 
 		if (this != from.automaton || this != to.automaton)
 			throw new AutomatonValidationException(
@@ -144,7 +146,7 @@ public class PDBaseComponent extends Component
 	 * @throws AutomatonValidationException
 	 *             if guarantees are violated
 	 */
-
+ 
 	public void validate()
 	{
 		if (!Configuration.DO_VALIDATION)
@@ -173,14 +175,14 @@ public class PDBaseComponent extends Component
 		for (PDAutomatonMode m : modes.values())
 			m.validate();
 
-		for (AutomatonTransition t : transitions)
+		for (PDAutomatonTransition t : transitions)
 			t.validate();
 
 		for (String label : labels)
 		{
 			boolean found = false;
 
-			for (AutomatonTransition t : transitions)
+			for (PDAutomatonTransition t : transitions)
 			{
 				if (label.equals(t.label))
 				{
@@ -212,7 +214,7 @@ public class PDBaseComponent extends Component
 			if (am.urgent)
 				continue;
 
-			Set<String> flows = am.patialFlowDynamics.keySet();
+			Set<String> flows = am.partialFlowDynamics.keySet();
 
 			if (firstModeName == null)
 			{
@@ -230,7 +232,7 @@ public class PDBaseComponent extends Component
 				}
 			}
 
-			for (Entry<String, ExpressionInterval> entry : am.flowDynamics.entrySet())
+			for (Entry<String, ExpressionInterval> entry : am.partialFlowDynamics.entrySet())
 			{
 				Expression exp = entry.getValue().getExpression();
 
@@ -256,7 +258,7 @@ public class PDBaseComponent extends Component
 	 * @param e
 	 *            the expression to check
 	 */
- 
+
 	private void checkExpression(Expression e)
 	{
 		if (e instanceof Variable)
@@ -293,7 +295,7 @@ public class PDBaseComponent extends Component
 
 		str.append("\nTransitions (" + transitions.size() + " total):");
 
-		for (AutomatonTransition t : transitions)
+		for (PDAutomatonTransition t : transitions)
 			str.append("\n " + t);
 
 		str.append("]");
@@ -328,7 +330,7 @@ public class PDBaseComponent extends Component
 		}
 
 		// copy transitions
-		for (AutomatonTransition at : transitions)
+		for (PDAutomatonTransition at : transitions)
 			at.copy(rv); // this adds it to rv
 
 		return rv;
@@ -359,12 +361,12 @@ public class PDBaseComponent extends Component
 	 *            the mode to
 	 * @return the first transition between modes named 'from' and 'to', or null if not found
 	 */
-
-	public AutomatonTransition findTransition(String from, String to)
+   
+	public PDAutomatonTransition findTransition(String from, String to)
 	{
-		AutomatonTransition rv = null;
+		PDAutomatonTransition rv = null;
 
-		for (AutomatonTransition at : transitions)
+		for (PDAutomatonTransition at : transitions)
 		{
 			if (at.from.name.equals(from) && at.to.name.equals(to))
 			{
