@@ -56,6 +56,7 @@ import com.verivital.hyst.printers.FlowstarPrinter;
 import com.verivital.hyst.printers.HyCompPrinter;
 import com.verivital.hyst.printers.Hylaa2Printer;
 import com.verivital.hyst.printers.PySimPrinter;
+import com.verivital.hyst.printers.PDHAPrinter;
 import com.verivital.hyst.printers.PythonQBMCPrinter;
 import com.verivital.hyst.printers.SimulinkStateflowPrinter;
 import com.verivital.hyst.printers.SpaceExPrinter;
