@@ -19,8 +19,9 @@ import com.verivital.hyst.grammar.formula.Operator;
 import com.verivital.hyst.grammar.formula.Variable;
 import com.verivital.hyst.internalpasses.RenameParams;
 import com.verivital.hyst.ir.AutomatonExportException;
-import com.verivital.hyst.ir.base.AutomatonMode;
-import com.verivital.hyst.ir.base.AutomatonTransition;
+import com.verivital.hyst.ir.base.PDAutomatonMode;
+import com.verivital.hyst.ir.base.PDAutomatonTransition;
+import com.verivital.hyst.ir.base.PDBaseComponent;
 import com.verivital.hyst.ir.base.PDBaseComponent;
 import com.verivital.hyst.ir.base.ExpressionInterval;
 import com.verivital.hyst.main.Hyst;
@@ -201,9 +202,9 @@ public class PDHAPrinter extends ToolPrinter
 		for (String modeName : pdha.modes.keySet())
 			modeNamesToIds.put(modeName, id++);
 
-		for (Entry<String, AutomatonMode> e : pdha.modes.entrySet())
+		for (Entry<String, PDAutomatonMode> e : pdha.modes.entrySet())
 		{
-			AutomatonMode mode = e.getValue();
+			PDAutomatonMode mode = e.getValue();
 
 			if (first)
 				first = false;
@@ -227,7 +228,7 @@ public class PDHAPrinter extends ToolPrinter
 			printLine("flow:");
 			this.increaseIndentation();
 
-			for (Entry<String, ExpressionInterval> entry : mode.flowDynamics.entrySet())
+			for (Entry<String, ExpressionInterval> entry : mode.partialFlowDynamics.entrySet())
 			{
 				ExpressionInterval ei = entry.getValue();
 
@@ -252,7 +253,7 @@ public class PDHAPrinter extends ToolPrinter
 		printLine(commentChar + " end modes"); // end all modes
 	}
 
-	private void printJumps(AutomatonMode mode)
+	private void printJumps(PDAutomatonMode mode)
 	{
 		printNewline();
 		printLine("jump:");
@@ -261,7 +262,7 @@ public class PDHAPrinter extends ToolPrinter
 
 		boolean first = true;
 
-		for (AutomatonTransition t : pdha.transitions)
+		for (PDAutomatonTransition t : pdha.transitions)
 		{
 			if (t.from != mode)
 				continue;
@@ -290,7 +291,7 @@ public class PDHAPrinter extends ToolPrinter
 
 			// TODO: this check was to 0, but we could have a model with 0 vars,
 			// which then would have no resets, and that would be fine
-			if (reset.size() != ha.variables.size())
+			if (reset.size() != pdha.variables.size())
 				throw new AutomatonExportException(
 						"Since dReach requires identity resets, it should never be null (but reset was null): "
 								+ reset);
@@ -337,10 +338,10 @@ public class PDHAPrinter extends ToolPrinter
 		this.decreaseIndentation();
 	}
 
-	// custom printer for dreach expressions, mix of infix and prefix
-	public static class DReachExpressionPrinter extends DefaultExpressionPrinter
+	// custom printer for pdha expressions, mix of infix and prefix
+	public static class PDHAExpressionPrinter extends DefaultExpressionPrinter
 	{
-		public DReachExpressionPrinter()
+		public PDHAExpressionPrinter()
 		{
 			super();
 
@@ -400,17 +401,17 @@ public class PDHAPrinter extends ToolPrinter
 	@Override
 	protected void printAutomaton()
 	{
-		Expression.expressionPrinter = new DReachExpressionPrinter(); // TODO:
+		Expression.expressionPrinter = new PDHAExpressionPrinter(); // TODO:
 																		// move
 																		// to
 																		// constructor?
 
-		this.pdha = (PDHABaseComponent) config.root;
+		this.pdha = (PDBaseComponent) config.root;
 
 		if (config.forbidden.size() == 0)
 		{
 			Hyst.log(
-					"DReach Printer: using initial states as forbidden states since forbidden states are not defined in model.");
+					"PDHA Printer: using initial states as forbidden states since forbidden states are not defined in model.");
 			config.forbidden = config.init;
 		}
 
