@@ -367,6 +367,31 @@ public class BaseComponent extends Component
 
 		return rv;
 	}
+
+
+	public PDBaseComponent convertToPDHA()
+	{
+
+		PDBaseComponent pdha = new PDBaseComponent();
+
+		// add PDmodes
+		for (Entry<String, AutomatonMode> e : modes.entrySet())
+		{
+			AutomatonMode am = e.getValue();
+			PDAutomatonMode pdmode = am.convertToPDmode();
+			pdha.modes.put(e.getKey(), pdmode.copy(pdha, pdmode.name));
+		}
+
+		// add PDtransitions
+		for (AutomatonTransition at : transitions)
+			PDAutomatonTransition pdtransition = at.convertToPDtransition();
+			pdtransition.copy(at); // this adds it to rv
+
+		return pdha;
+
+		
+
+	}
 	
 
 }
