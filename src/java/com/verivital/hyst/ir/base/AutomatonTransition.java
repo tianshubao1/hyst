@@ -155,4 +155,40 @@ public class AutomatonTransition
 				+ ", guard: " + DefaultExpressionPrinter.instance.print(guard) + ", reset: "
 				+ AutomatonUtil.getMapExpressionIntervalString(reset) + "]";
 	}
+
+
+	public PDAutomatonTransition convertToPDtransition(PDBaseComponent parent)
+	{
+		// parent may be different, so search for from.name and to.name in
+		// parent
+		PDAutomatonMode parentFrom = null, parentTo = null;
+
+		for (PDAutomatonMode am : parent.modes.values())
+		{
+			if (am.name.equals(from.name))
+				parentFrom = am;
+
+			if (am.name.equals(to.name))
+				parentTo = am;
+		}
+
+		if (parentFrom == null)
+			throw new AutomatonExportException("Source mode ('" + from.name
+					+ "') not found in parent automaton: " + parent.getPrintableInstanceName());
+
+		if (parentTo == null)
+			throw new AutomatonExportException("Destination mode ('" + to.name
+					+ "') not found in parent automaton: " + parent.getPrintableInstanceName());
+
+		PDAutomatonTransition rv = parent.createTransition(parentFrom, parentTo);
+
+		rv.guard = guard.copy();
+
+		for (Entry<String, ExpressionInterval> e : reset.entrySet())
+			rv.reset.put(e.getKey(), e.getValue().copy());
+
+		rv.label = label;
+
+		return rv;
+	}
 }
