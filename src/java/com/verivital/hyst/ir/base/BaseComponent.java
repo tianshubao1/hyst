@@ -378,17 +378,14 @@ public class BaseComponent extends Component
 		for (Entry<String, AutomatonMode> e : modes.entrySet())
 		{
 			AutomatonMode am = e.getValue();
-			PDAutomatonMode pdmode = am.convertToPDmode();
-			pdha.modes.put(e.getKey(), pdmode.copy(pdha, pdmode.name));
+			PDAutomatonMode pdmode = am.convertToPDmode(pdha, am.name);
 		}
 
 		// add PDtransitions
 		for (AutomatonTransition at : transitions)
-			PDAutomatonTransition pdtransition = at.convertToPDtransition();
-			pdtransition.copy(at); // this adds it to rv
+			at.convertToPDtransition(pdha);
 
 		return pdha;
-
 		
 
 	}
