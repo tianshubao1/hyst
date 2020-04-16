@@ -191,4 +191,25 @@ public class AutomatonMode
 
 		return rv;
 	}
+
+
+
+	public PDAutomatonMode convertToPDmode(PDBaseComponent parent, String newName)
+	{
+		PDAutomatonMode pdmode = parent.createMode(newName);
+
+		pdmode.invariant = invariant.copy();
+
+		if (flowDynamics != null)
+		{
+			for (Entry<String, ExpressionInterval> e : flowDynamics.entrySet())
+				pdmode.partialFlowDynamics.put(e.getKey(), e.getValue().copy());
+		}
+		else
+			pdmode.partialFlowDynamics = null;
+
+		pdmode.urgent = urgent;
+
+		return pdmode;
+	}
 }
