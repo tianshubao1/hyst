@@ -14,7 +14,7 @@ import java.util.List;
  */
 public enum Operator
 {
-	ADD, SUBTRACT, MULTIPLY, DIVIDE, POW, // two children
+	ADD, SUBTRACT, MULTIPLY, DIVIDE, POW, ULINE,// two children
 	AND, OR, EQUAL, LESS, GREATER, LESSEQUAL, GREATEREQUAL, NOTEQUAL, // two
 																		// children
 	NEGATIVE, LOGICAL_NOT, // one child
@@ -34,7 +34,7 @@ public enum Operator
 		// lowest priority first
 		final Operator[][] order = { { OR }, { AND },
 				{ EQUAL, NOTEQUAL, LESS, LESSEQUAL, GREATER, GREATEREQUAL }, { ADD, SUBTRACT },
-				{ MULTIPLY, DIVIDE }, { POW }, { TAN, SQRT, SIN, COS, EXP, LN, LOC }, };
+				{ MULTIPLY, DIVIDE }, { POW, ULINE }, { TAN, SQRT, SIN, COS, EXP, LN, LOC }, };
 
 		int rv = -1;
 
