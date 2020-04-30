@@ -20,31 +20,31 @@ public class HystExpressionParser extends Parser {
 		WS=1, TICK=2, TRUE=3, FALSE=4, NUM=5, VAR=6, LPAR=7, RPAR=8, LBRAC=9, 
 		RBRAC=10, COMMA=11, SEMICOLON=12, COLON=13, PLUS=14, MINUS=15, TIMES=16, 
 		DIV=17, POW=18, DOT=19, AND=20, OR=21, NOT=22, LESS=23, GREATER=24, LESSEQUAL=25, 
-		GREATEREQUAL=26, NOTEQUAL=27, EQUAL=28, EQUAL_RESET=29;
+		GREATEREQUAL=26, NOTEQUAL=27, EQUAL=28, EQUAL_RESET=29, ULINE = 30;
 	public static final int
 		RULE_matrixRow = 0, RULE_matrixRange = 1, RULE_matrixExpression = 2, RULE_functionExpression = 3, 
 		RULE_resetSubExpression = 4, RULE_resetExpression = 5, RULE_guardExpression = 6, 
 		RULE_invariantExpression = 7, RULE_flowExpression = 8, RULE_dottedVar = 9, 
 		RULE_locExpression = 10, RULE_or = 11, RULE_and = 12, RULE_not = 13, RULE_op = 14, 
 		RULE_compare = 15, RULE_addSub = 16, RULE_timesDiv = 17, RULE_pow = 18, 
-		RULE_negativeUnary = 19, RULE_unary = 20;
+		RULE_negativeUnary = 19, RULE_unary = 20, RULE_pdeExpression = 21;
 	public static final String[] ruleNames = {
 		"matrixRow", "matrixRange", "matrixExpression", "functionExpression", 
 		"resetSubExpression", "resetExpression", "guardExpression", "invariantExpression", 
 		"flowExpression", "dottedVar", "locExpression", "or", "and", "not", "op", 
-		"compare", "addSub", "timesDiv", "pow", "negativeUnary", "unary"
+		"compare", "addSub", "timesDiv", "pow", "negativeUnary", "unary","pdeExpression"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
 		null, null, "'''", "'true'", "'false'", null, null, "'('", "')'", "'['", 
 		"']'", "','", "';'", "':'", "'+'", "'-'", "'*'", "'/'", "'^'", "'.'", 
-		null, null, "'!'", "'<'", "'>'", "'<='", "'>='", "'!='", null, "':='"
+		null, null, "'!'", "'<'", "'>'", "'<='", "'>='", "'!='", null, "':='", "'_'",
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, "WS", "TICK", "TRUE", "FALSE", "NUM", "VAR", "LPAR", "RPAR", "LBRAC", 
+		null, "WS", "TICK", "TRUE",  "FALSE", "NUM", "VAR", "LPAR", "RPAR", "LBRAC", 
 		"RBRAC", "COMMA", "SEMICOLON", "COLON", "PLUS", "MINUS", "TIMES", "DIV", 
 		"POW", "DOT", "AND", "OR", "NOT", "LESS", "GREATER", "LESSEQUAL", "GREATEREQUAL", 
-		"NOTEQUAL", "EQUAL", "EQUAL_RESET"
+		"NOTEQUAL", "EQUAL", "EQUAL_RESET", "ULINE"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -223,6 +223,153 @@ public class HystExpressionParser extends Parser {
 		}
 		return _localctx;
 	}
+
+
+	public static class PdeExpressionContext extends ParserRuleContext {
+		public PdeExpressionContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_pdeExpression; }
+	 
+		public PdeExpressionContext() { }
+		public void copyFrom(PdeExpressionContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class PdeFalseContext extends PdeExpressionContext {
+		public TerminalNode FALSE() { return getToken(HystExpressionParser.FALSE, 0); }
+		public PdeFalseContext(PdeExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HystExpressionVisitor ) return ((HystExpressionVisitor<? extends T>)visitor).visitPdeFalse(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class PdeBlankContext extends PdeExpressionContext {
+		public TerminalNode EOF() { return getToken(HystExpressionParser.EOF, 0); }
+		public PdeBlankContext(PdeExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HystExpressionVisitor ) return ((HystExpressionVisitor<? extends T>)visitor).visitPdeBlank(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public static class PdeContext extends PdeExpressionContext {
+		public List<TerminalNode> VAR() { return getTokens(HystExpressionParser.VAR); }
+		public TerminalNode VAR(int i) {
+			return getToken(HystExpressionParser.VAR, i);
+		}
+		public List<TerminalNode> ULINE() { return getTokens(HystExpressionParser.ULINE); }
+		public TerminalNode ULINE(int i) {
+			return getToken(HystExpressionParser.ULINE, i);
+		}
+		public List<TerminalNode> EQUAL() { return getTokens(HystExpressionParser.EQUAL); }
+		public TerminalNode EQUAL(int i) {
+			return getToken(HystExpressionParser.EQUAL, i);
+		}
+		public List<AddSubContext> addSub() {
+			return getRuleContexts(AddSubContext.class);
+		}
+		public AddSubContext addSub(int i) {
+			return getRuleContext(AddSubContext.class,i);
+		}
+		public TerminalNode EOF() { return getToken(HystExpressionParser.EOF, 0); }
+		public List<TerminalNode> TICK() { return getTokens(HystExpressionParser.TICK); }
+		public TerminalNode TICK(int i) {
+			return getToken(HystExpressionParser.TICK, i);
+		}
+		public List<TerminalNode> AND() { return getTokens(HystExpressionParser.AND); }
+		public TerminalNode AND(int i) {
+			return getToken(HystExpressionParser.AND, i);
+		}
+		public PdeContext(PdeExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HystExpressionVisitor ) return ((HystExpressionVisitor<? extends T>)visitor).visitPde(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final PdeExpressionContext pdeExpression() throws RecognitionException {
+		PdeExpressionContext _localctx = new PdeExpressionContext(_ctx, getState());
+		enterRule(_localctx, 42, RULE_pdeExpression);
+		int _la;
+		try {
+			setState(270);
+			switch (_input.LA(1)) {
+			case EOF:
+				_localctx = new PdeBlankContext(_localctx);
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(271);
+				match(EOF);
+				}
+				break;
+			case VAR:
+				_localctx = new PdeContext(_localctx);
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(272);
+				match(VAR);
+				setState(273);
+				_la = _input.LA(1);
+				if (_la==TICK) {
+					{
+					setState(275);
+					match(TICK);
+					}
+				}
+
+				setState(276);
+				match(EQUAL);
+				setState(277);
+				match(VAR);
+				setState(278);
+				match(ULINE);
+				setState(279);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				while (_la==VAR) {					
+					
+					setState(280);
+					match(VAR);
+					setState(281);
+					match(VAR);
+					setState(282);
+					_errHandler.sync(this);
+					_la = _input.LA(1);				
+				}
+				setState(283);
+				match(PLUS);
+				setState(284);
+				addSub(0);
+				match(EOF);
+				}
+				break;
+			case FALSE:
+				_localctx = new PdeFalseContext(_localctx);
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(283);
+				match(FALSE);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
 
 	public static class MatrixExpressionContext extends ParserRuleContext {
 		public MatrixExpressionContext(ParserRuleContext parent, int invokingState) {
