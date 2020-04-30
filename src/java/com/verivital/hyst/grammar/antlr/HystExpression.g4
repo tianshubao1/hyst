@@ -81,7 +81,7 @@ flowExpression
     | FALSE # FlowFalse
     ;
 
-partialFlowExpression
+pdeExpression
     : EOF							# PDEFlowBlank
     | VAR TICK? EQUAL VAR ULINE (VAR)* PLUS addSub EOF		# PDEFlow
     | FALSE # PDEFlowFalse
