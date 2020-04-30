@@ -20,7 +20,7 @@ public class FormulaParser
 
 		try
 		{
-			HystExpressionLexer lex = new HystExpressionLexer(new ANTLRInputStream(text));
+			HystExpressionLexer lex = new HystExpressionLexer(new ANTLRInputStream(text)); //parsing starts here
 
 			par = new HystExpressionParser(new CommonTokenStream(lex));
 			par.setErrorHandler(new BailErrorStrategy());
