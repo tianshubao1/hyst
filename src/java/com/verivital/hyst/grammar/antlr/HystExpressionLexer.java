@@ -20,7 +20,7 @@ public class HystExpressionLexer extends Lexer {
 		WS=1, TICK=2, TRUE=3, FALSE=4, NUM=5, VAR=6, LPAR=7, RPAR=8, LBRAC=9, 
 		RBRAC=10, COMMA=11, SEMICOLON=12, COLON=13, PLUS=14, MINUS=15, TIMES=16, 
 		DIV=17, POW=18, DOT=19, AND=20, OR=21, NOT=22, LESS=23, GREATER=24, LESSEQUAL=25, 
-		GREATEREQUAL=26, NOTEQUAL=27, EQUAL=28, EQUAL_RESET=29;
+		GREATEREQUAL=26, NOTEQUAL=27, EQUAL=28, EQUAL_RESET=29, ULINE = 30;
 	public static String[] modeNames = {
 		"DEFAULT_MODE"
 	};
@@ -29,19 +29,19 @@ public class HystExpressionLexer extends Lexer {
 		"WS", "TICK", "TRUE", "FALSE", "NUM", "VAR", "LPAR", "RPAR", "LBRAC", 
 		"RBRAC", "COMMA", "SEMICOLON", "COLON", "PLUS", "MINUS", "TIMES", "DIV", 
 		"POW", "DOT", "AND", "OR", "NOT", "LESS", "GREATER", "LESSEQUAL", "GREATEREQUAL", 
-		"NOTEQUAL", "EQUAL", "EQUAL_RESET"
+		"NOTEQUAL", "EQUAL", "EQUAL_RESET", "ULINE"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
 		null, null, "'''", "'true'", "'false'", null, null, "'('", "')'", "'['", 
 		"']'", "','", "';'", "':'", "'+'", "'-'", "'*'", "'/'", "'^'", "'.'", 
-		null, null, "'!'", "'<'", "'>'", "'<='", "'>='", "'!='", null, "':='"
+		null, null, "'!'", "'<'", "'>'", "'<='", "'>='", "'!='", null, "':='", "'_'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "WS", "TICK", "TRUE", "FALSE", "NUM", "VAR", "LPAR", "RPAR", "LBRAC", 
 		"RBRAC", "COMMA", "SEMICOLON", "COLON", "PLUS", "MINUS", "TIMES", "DIV", 
 		"POW", "DOT", "AND", "OR", "NOT", "LESS", "GREATER", "LESSEQUAL", "GREATEREQUAL", 
-		"NOTEQUAL", "EQUAL", "EQUAL_RESET"
+		"NOTEQUAL", "EQUAL", "EQUAL_RESET", "ULINE"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
