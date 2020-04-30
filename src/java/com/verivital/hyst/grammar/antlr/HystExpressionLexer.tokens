@@ -27,6 +27,7 @@ GREATEREQUAL=26
 NOTEQUAL=27
 EQUAL=28
 EQUAL_RESET=29
+ULINE=30
 '\''=2
 'true'=3
 'false'=4
@@ -50,3 +51,4 @@ EQUAL_RESET=29
 '>='=26
 '!='=27
 ':='=29
+'_'=30
