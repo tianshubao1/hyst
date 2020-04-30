@@ -425,7 +425,8 @@ public class ExpVisitor extends HystExpressionBaseVisitor<Expression>
 		// special case: lookup table
 		if (name.equals("lut"))
 			rv = processLut(ctx);
-
+		if (name.equals("pde"))
+			rv = processPde(ctx);
 		if (name.equals("reshape"))
 			rv = processReshape(ctx);
 
@@ -510,6 +511,47 @@ public class ExpVisitor extends HystExpressionBaseVisitor<Expression>
 
 		return new LutExpression(varList, data, breakPoints);
 	}
+
+
+	/**
+	 * Create a partial differential equation from a function context. Luts expect three arguments: 1. var
+	 * list, 2. table, and 3. breakpoints
+	 * 
+	 * @param ctx
+	 *            the function context
+	 * @return the constructed expression
+	 */
+	private Expression processPde(FunctionContext ctx)
+	{
+		List<AddSubContext> args = ctx.addSub();
+
+		if (args.size() != 1)
+			throw new AutomatonExportException(
+					"Function 'pde' expects only 1 partial differential equation");
+
+		PdeExpression vars = (PdeExpression) (visit(args.get(0)));
+
+		if (vars.getNumDims() != 1)
+			throw new AutomatonExportException(
+					"Function 'lut' expects fist argument to be a 1-d list of variables");
+
+		Expression[] varList = new Expression[vars.getDimWidth(0)];
+
+		for (int v = 0; v < vars.getDimWidth(0); ++v)
+			varList[v] = vars.get(v);
+
+		MatrixExpression data = (MatrixExpression) visit(args.get(1));
+		MatrixExpression[] breakPoints = new MatrixExpression[args.size() - 2];
+
+		for (int a = 2; a < args.size(); ++a)
+		{
+			MatrixExpression bp = (MatrixExpression) visit(args.get(a));
+			breakPoints[a - 2] = bp;
+		}
+
+		return new PdeExpression(varList, data, breakPoints);
+	}
+
 
 	@Override
 	public Expression visitMatrixRangeExp(@NotNull HystExpressionParser.MatrixRangeExpContext ctx)
