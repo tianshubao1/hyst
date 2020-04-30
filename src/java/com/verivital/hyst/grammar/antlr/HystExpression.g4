@@ -2,6 +2,7 @@ grammar HystExpression;
 
 WS : [ \t\r\n]+ -> skip;
 TICK : '\'';
+ULINE : '_';
 
 TRUE : 'true';
 FALSE : 'false';
@@ -77,9 +78,16 @@ invariantExpression
 flowExpression
     : EOF							# FlowBlank
     | VAR TICK? EQUAL addSub (AND VAR TICK? EQUAL addSub)* EOF	# Flow
-	| FALSE # FlowFalse
+    | FALSE # FlowFalse
     ;
 
+pdeExpression
+    : EOF							# PDEFlowBlank
+    | VAR TICK? EQUAL VAR ULINE (VAR)* PLUS addSub EOF		# PDEFlow
+    | FALSE # PDEFlowFalse
+    ;
+
+    
 dottedVar
 	: VAR (DOT VAR)* TICK?	# DotVar
 	;
@@ -131,6 +139,7 @@ timesDiv
     | pow     		    # ToPow
     ;
 
+    
 pow
     : pow POW negativeUnary # PowExpression
     | negativeUnary         # ToNegativeUnary
