@@ -125,6 +125,27 @@ public interface HystExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	T visitFlowFalse(HystExpressionParser.FlowFalseContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code DotVar}
+	 * labeled alternative in {@link HystExpressionParser#pdeExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPdeBlank(HystExpressionParser.PdeBlankContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Pde}
+	 * labeled alternative in {@link HystExpressionParser#pdeExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPde(HystExpressionParser.PdeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Pde}
+	 * labeled alternative in {@link HystExpressionParser#pdeExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPdeFalse(HystExpressionParser.PdeFalseContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code DotVar}
 	 * labeled alternative in {@link HystExpressionParser#dottedVar}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -256,6 +277,13 @@ public interface HystExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPlus(HystExpressionParser.PlusContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ToTimesDiv}
+	 * labeled alternative in {@link HystExpressionParser#addSub}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	//T visitPartialDev(HystExpressionParser.PartialDevContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ToTimesDiv}
 	 * labeled alternative in {@link HystExpressionParser#addSub}.
