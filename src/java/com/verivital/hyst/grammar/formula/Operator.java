@@ -34,7 +34,7 @@ public enum Operator
 		// lowest priority first
 		final Operator[][] order = { { OR }, { AND },
 				{ EQUAL, NOTEQUAL, LESS, LESSEQUAL, GREATER, GREATEREQUAL }, { ADD, SUBTRACT },
-				{ MULTIPLY, DIVIDE }, { POW, ULINE }, { TAN, SQRT, SIN, COS, EXP, LN, LOC }, };
+				{ MULTIPLY, DIVIDE}, {POW, ULINE}, { TAN, SQRT, SIN, COS, EXP, LN, LOC }, };
 
 		int rv = -1;
 
